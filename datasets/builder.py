@@ -5,16 +5,17 @@ from functools import partial
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
-import albumentations as A
 from omegaconf import DictConfig, ListConfig
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
+import albumentations as A
 import utils.distributed as dist_utils
-from utils.registry import build_from_cfg
-from .transforms import TwoCropsTransform
-from .sampler import DistributedEvalSampler
 from datasets.registry import DATASETS, TRANSFORMS
+from utils.registry import build_from_cfg
+
+from .sampler import DistributedEvalSampler
+from .transforms import TwoCropsTransform
 
 
 def build_dataset(
@@ -63,7 +64,8 @@ def build_dataset(
 
 
 def build_transforms(cfg: Union[ListConfig, List]) -> List:
-    """Build an Albumentations data augmentation pipeline based on the given config
+    """Build an Albumentations data augmentation pipeline based on the given
+    config.
 
     Args:
         cfg (Union[ListConfig, List]): a hydra config object or a list containing
@@ -71,6 +73,7 @@ def build_transforms(cfg: Union[ListConfig, List]) -> List:
 
     Return:
         A list of Alubmentations objects
+
     """
     if cfg is None or not isinstance(cfg, (list, ListConfig)):
         warnings.warn(
@@ -104,6 +107,7 @@ def _compose_transforms(transform_list: List, task_type: str) -> A.Compose:
 
     Return:
         A compose object.
+
     """
     if task_type in ["SimSiam", "ContrastiveLearning"]:
         transforms = A.Compose([TwoCropsTransform(transform_list)])
@@ -134,7 +138,8 @@ def load_datasets(
     seed: Optional[int] = None,
     **kwargs: Any,
 ) -> Tuple[DataLoader, DataLoader]:
-    """Initializes the PyTorch Dataloader object for the training and test datasets.
+    """Initializes the PyTorch Dataloader object for the training and test
+    datasets.
 
     Args:
         datasets (Dict): a dictionary containing the train and test datasets.
@@ -147,6 +152,7 @@ def load_datasets(
 
     Return:
         A tuple of DataLoader objects, for the training and test datasets.
+
     """
     train_dataset = datasets["train"]
     distributed = dist_utils.is_dist_avail_and_initialized()

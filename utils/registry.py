@@ -6,8 +6,8 @@ from omegaconf.dictconfig import DictConfig
 
 
 class Registry(object):
-    """This class is used to create registries, which are used to register classes.
-    The registries are used to build objects from a config file.
+    """This class is used to create registries, which are used to register
+    classes. The registries are used to build objects from a config file.
 
     Args:
         name (str): Name of the registry.
@@ -19,6 +19,7 @@ class Registry(object):
         >>>     pass
         >>> backbone = BACKBONES.get("ResNet")
         >>> assert backbone == ResNet
+
     """
 
     def __init__(self, name: str) -> None:
@@ -43,6 +44,7 @@ class Registry(object):
 
         Returns:
             Callable: The class.
+
         """
         if class_name not in self._class_dict:
             raise KeyError(f"{class_name} is not in the {self._name} registry")
@@ -55,6 +57,7 @@ class Registry(object):
             cls (object): Class to be registered.
             force (bool, optional): If True, overwrites the class if it already exists.
                 Defaults to False.
+
         """
         # check if cls is a class
         if not inspect.isclass(cls):
@@ -80,6 +83,7 @@ class Registry(object):
 
         Returns:
             Callable: The registered class.
+
         """
         if cls is None:
             return partial(self.register_class, force=force)
@@ -90,8 +94,8 @@ class Registry(object):
 def build_from_cfg(
     cfg: Union[Dict, DictConfig], registry: object, default_args: Optional[Dict] = None
 ):
-    """Build a module from config dict.
-    Modified from: https://github.com/WXinlong/DenseCL/blob/main/openselfsup/utils/registry.py
+    """Build a module from config dict. Modified from: https://github.com/WXinl
+    ong/DenseCL/blob/main/openselfsup/utils/registry.py.
 
     Args:
         cfg (dict): Config dict. It should at least contain the key "type".
@@ -99,6 +103,7 @@ def build_from_cfg(
         default_args (dict, optional): Default initialization arguments.
     Returns:
         obj: The constructed object.
+
     """
     assert isinstance(cfg, (dict, DictConfig)) and "type" in cfg
     assert isinstance(default_args, dict) or default_args is None

@@ -7,11 +7,12 @@ from torch.utils.data import Dataset as TorchDataset
 
 
 class Dataset(TorchDataset):
-    """The base class for all datasets in the framework
+    """The base class for all datasets in the framework.
 
     Args:
         root: str
         transform: Optional[Callable]:
+
     """
 
     __metaclass__ = abc.ABCMeta
@@ -32,22 +33,22 @@ class Dataset(TorchDataset):
     @property
     @abc.abstractmethod
     def num_classes(self) -> int:
-        """Number of classes in the dataset"""
+        """Number of classes in the dataset."""
 
     @property
     @abc.abstractmethod
     def samples(self) -> List[Tuple[List[str], Any]]:
-        """List of samples in the dataset"""
+        """List of samples in the dataset."""
 
     @property
     def targets(self) -> Any:
-        """List of targets in the dataset"""
+        """List of targets in the dataset."""
         return list(zip(*self.samples))[1]
 
     def __len__(self) -> int:
-        """Number of samples in the dataset"""
+        """Number of samples in the dataset."""
         raise NotImplementedError
 
     def __getitem__(self, index: int) -> Any:
-        """Get sample at given index"""
+        """Get sample at given index."""
         raise NotImplementedError

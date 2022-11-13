@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 
 from datasets.registry import DATASETS
+
 from .file_src_dataset import FileSrcDataset
 from .utils import generate_density_map
 
@@ -26,6 +27,7 @@ class GWSUsask(FileSrcDataset):
             The transformation to apply to the data.
         seed: Optional[int]
             The seed to use for random number generators.
+
     """
 
     def __init__(
@@ -76,7 +78,7 @@ class GWSUsask(FileSrcDataset):
     def get_target(
         img_h: int, img_w: int, keypoints: np.ndarray, pyramid_level: int
     ) -> OrderedDict[Any, Any]:
-        """Generate density map of keypoints"""
+        """Generate density map of keypoints."""
         map_shape = (np.array([img_h, img_w]) + 2**pyramid_level - 1) // (
             2**pyramid_level
         )

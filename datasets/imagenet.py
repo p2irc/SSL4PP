@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Callable, Optional, Union
 
 from datasets.registry import DATASETS
+
 from .image_dataset_folder import ImageDatasetFolder
 
 
@@ -25,6 +26,7 @@ class ImageNet(ImageDatasetFolder):
             The transformation to apply to the data.
         seed: Optional[int]
             The seed to use for the random number generator.
+
     """
 
     def __init__(

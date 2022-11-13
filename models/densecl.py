@@ -11,9 +11,7 @@ from models.registry import MODELS
 
 @MODELS.register_class
 class DenseCL(MoCo):
-    """
-    Dense Contrastive Learning.
-    https://arxiv.org/abs/2011.09157
+    """Dense Contrastive Learning. https://arxiv.org/abs/2011.09157.
 
     Args:
         backbone (Union[Dict, DictConfig]): a hydra config object containing all
@@ -22,6 +20,7 @@ class DenseCL(MoCo):
             the information needed to build the projection head.
         queue_len (Optional[int]): number of embeddings in the queue. Defaults to 65536.
         momentum (Optional[float]): momentum value. Defaults to 0.999.
+
     """
 
     def __init__(

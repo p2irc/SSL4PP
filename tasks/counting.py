@@ -1,12 +1,12 @@
 from collections import OrderedDict
 from typing import Dict, Tuple, Union
 
-from torch import Tensor
 from omegaconf import DictConfig
+from torch import Tensor
 
+from tasks.object_detection import ObjectDetection
 from tasks.registry import TASKS
 from trainer.metrics import CountingMetrics
-from tasks.object_detection import ObjectDetection
 
 
 @TASKS.register_class
@@ -15,6 +15,7 @@ class DensityCounting(ObjectDetection):
 
     Args:
         cfg (DictConfig): Hydra config object.
+
     """
 
     def __init__(self, cfg: DictConfig) -> None:

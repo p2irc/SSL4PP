@@ -4,41 +4,43 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import cv2
-import PIL
 import numpy as np
+import PIL
 
 from datasets.base import Dataset
+
 from .utils import get_random_sample
 
 
 class ImageDatasetFolder(Dataset):
     """A generic dataset that can load images with a folder structure like:
-    root/class_name/img.ext
+    root/class_name/img.ext.
 
-        Args:
-            root: str
-                The root directory of the dataset
-            sample_size: Optional[Union[float, int]] = None
-                The number of samples to be used in the dataset. If float, it is
-                the percentage of samples to use. If int, it is the exact number
-                of samples to use.
-            sampling_method: Optional[str] = "stratified"
-                The sampling method to use. One of "stratified", "uniform".
-            transform: Optional[Callable] = None
-                The transformation to apply to the data.
-            seed: Optional[int] = None
-                The seed to use for the random number generator.
+    Args:
+        root: str
+            The root directory of the dataset
+        sample_size: Optional[Union[float, int]] = None
+            The number of samples to be used in the dataset. If float, it is
+            the percentage of samples to use. If int, it is the exact number
+            of samples to use.
+        sampling_method: Optional[str] = "stratified"
+            The sampling method to use. One of "stratified", "uniform".
+        transform: Optional[Callable] = None
+            The transformation to apply to the data.
+        seed: Optional[int] = None
+            The seed to use for the random number generator.
 
-        Attributes:
-            classes: List[str]
-                The list of classes in the dataset.
-            class_to_idx: Dict[str, int]
-                The mapping from class name to class index.
-            idx_to_class: Dict[int, str]
-                The mapping from class index to class name.
-            samples: List[Tuple[List[str], Any]]
-                The list of samples in the dataset. Each sample is a tuple of
-                (file_path, target).
+    Attributes:
+        classes: List[str]
+            The list of classes in the dataset.
+        class_to_idx: Dict[str, int]
+            The mapping from class name to class index.
+        idx_to_class: Dict[int, str]
+            The mapping from class index to class name.
+        samples: List[Tuple[List[str], Any]]
+            The list of samples in the dataset. Each sample is a tuple of
+            (file_path, target).
+
     """
 
     IMG_EXTENSIONS = (

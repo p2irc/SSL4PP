@@ -1,17 +1,17 @@
 import json
-from pathlib import Path
 from abc import abstractmethod
+from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple
 
-import torch
 import pandas as pd
+import torch
 
 from datasets.base import Dataset
 
 
 class FileSrcDataset(Dataset):
-    """Object for a dataset that is stored in a file.
-    Supports JSON and CSV files.
+    """Object for a dataset that is stored in a file. Supports JSON and CSV
+    files.
 
     Args:
         root: str
@@ -20,6 +20,7 @@ class FileSrcDataset(Dataset):
             The transformation to apply to the data.
         seed: Optional[int]
             The seed to use for the random number generator.
+
     """
 
     def __init__(
@@ -33,20 +34,20 @@ class FileSrcDataset(Dataset):
     @property
     @abstractmethod
     def num_classes(self) -> int:
-        """Number of classes in the dataset"""
+        """Number of classes in the dataset."""
 
     @property
     @abstractmethod
     def samples(self) -> Tuple[List[str], Any]:
-        """List of samples in the dataset"""
+        """List of samples in the dataset."""
 
     def __len__(self) -> int:
-        """Number of samples in the dataset"""
+        """Number of samples in the dataset."""
         raise NotImplementedError
 
     @staticmethod
     def load_data_from_src(*args, **kwargs) -> Any:
-        """Loads the dataset from the given source"""
+        """Loads the dataset from the given source."""
 
     @staticmethod
     def load_from_json(src_path: Path) -> List[dict]:
@@ -58,6 +59,7 @@ class FileSrcDataset(Dataset):
 
         Returns:
             The dataset as a list of dictionaries.
+
         """
         assert src_path.exists()
         with open(src_path, "r") as f:
@@ -75,6 +77,7 @@ class FileSrcDataset(Dataset):
 
         Returns:
             The dataset as a pandas DataFrame.
+
         """
         assert src_path.exists()
 
@@ -84,8 +87,8 @@ class FileSrcDataset(Dataset):
     @staticmethod
     @abstractmethod
     def make_dataset(*args, **kwargs) -> List[Tuple[Any, Any]]:
-        """Creates a list of path/target pairs"""
+        """Creates a list of path/target pairs."""
 
     def __getitem__(self, index: int) -> Any:
-        """Get sample at given index"""
+        """Get sample at given index."""
         raise NotImplementedError

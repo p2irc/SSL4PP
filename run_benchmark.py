@@ -1,12 +1,12 @@
 from pathlib import Path
 
-import wandb
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
 import tasks.builder as task_builder
 import utils.distributed as dist_utils
 import utils.misc
+import wandb
 
 
 @hydra.main(config_path="configs", config_name="config")
@@ -15,6 +15,7 @@ def main(cfg: DictConfig):
 
     Args:
         cfg (DictConfig): Hydra config object.
+
     """
     utils.misc.set_random_seed(cfg.get("seed"), cfg.get("deterministic", False))
 

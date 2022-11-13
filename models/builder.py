@@ -3,11 +3,12 @@ import sys
 sys.path.append("..")
 from typing import Dict, Optional
 
+from omegaconf import DictConfig
 from torch import nn
 
-from utils.registry import build_from_cfg, Registry
+from utils.registry import Registry, build_from_cfg
+
 from .registry import BACKBONES, HEADS, MODELS
-from omegaconf import DictConfig
 
 
 def build(cfg: DictConfig, registry: Registry, default_args: Optional[Dict] = None):

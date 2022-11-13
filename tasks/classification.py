@@ -2,16 +2,16 @@ import shutil
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Union
 
+import torch
 from omegaconf import DictConfig
+from torchmetrics import Accuracy, F1Score, MetricCollection
 from wandb.sdk.wandb_run import Run
 
-import torch
-from torchmetrics import Accuracy, F1Score, MetricCollection
+import utils.distributed as dist_utils
+from tasks.registry import TASKS
+from utils.logger import MetricLogger
 
 from .base import Task
-from tasks.registry import TASKS
-import utils.distributed as dist_utils
-from utils.logger import MetricLogger
 
 
 @TASKS.register_class
@@ -24,6 +24,7 @@ class ImageClassification(Task):
     Attributes:
         best_eval_score (float): Best evaluation score.
         is_best_ckpt (bool): Whether the current checkpoint is the best.
+
     """
 
     def __init__(self, cfg: DictConfig, **kwargs: Any) -> None:

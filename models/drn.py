@@ -1,21 +1,20 @@
-""" Detection and Regression Network (DRN) from
-https://www.frontiersin.org/articles/10.3389/fpls.2021.575751/full
+"""Detection and Regression Network (DRN) from
+https://www.frontiersin.org/articles/10.3389/fpls.2021.575751/full.
 
 Hacked together by Franklin Ogidi
+
 """
 from collections import OrderedDict
 from typing import Optional, OrderedDict, Tuple
 
 import torch
-from torch import nn
-from torch import Tensor
-from torchvision.ops import misc as misc_nn_ops
-from torchvision.models.detection.backbone_utils import (
-    resnet_fpn_backbone,
-    _validate_trainable_layers,
-)
-
 from omegaconf.dictconfig import DictConfig
+from torch import Tensor, nn
+from torchvision.models.detection.backbone_utils import (
+    _validate_trainable_layers,
+    resnet_fpn_backbone,
+)
+from torchvision.ops import misc as misc_nn_ops
 
 from models.registry import MODELS
 
@@ -23,7 +22,7 @@ from models.registry import MODELS
 @MODELS.register_class
 class DRN(nn.Module):
     """Detection and Regression Network. Adapted from:
-    https://www.frontiersin.org/articles/10.3389/fpls.2021.575751/full
+    https://www.frontiersin.org/articles/10.3389/fpls.2021.575751/full.
 
     Args:
         backbone (DictConfig): Config for the backbone, has to contain:
@@ -39,6 +38,7 @@ class DRN(nn.Module):
 
     Returns:
         OrderedDict[str, Tensor]: Heatmaps and count.
+
     """
 
     def __init__(

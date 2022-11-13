@@ -5,6 +5,7 @@ from torch import Tensor
 from torch.nn import L1Loss
 
 from trainer.registry import LOSSES
+
 from .weighted_smooth_l1_loss import WeightedSmoothL1Loss
 
 

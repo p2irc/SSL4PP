@@ -21,4 +21,3 @@ trainer:
   use_lars: True
   step_freq: epoch
   mixed_precision: true
-  

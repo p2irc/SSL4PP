@@ -8,7 +8,7 @@ eval_only_at_end: False
 evaluate: False
 model:
   type: FasterRCNN
-  backbone: 
+  backbone:
     type: ResNet
     depth: 50
   num_classes: 2 # including background

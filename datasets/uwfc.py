@@ -2,11 +2,12 @@ from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import cv2
-import PIL
 import pandas as pd
+import PIL
 from numpy import ndarray
 
 from datasets.registry import DATASETS
+
 from .file_src_dataset import FileSrcDataset
 from .utils import get_random_sample
 
@@ -33,6 +34,7 @@ class UWFC(FileSrcDataset):
             The transformation to apply to the data.
         seed: Optional[int]
             The seed to use for the random number generator.
+
     """
 
     def __init__(

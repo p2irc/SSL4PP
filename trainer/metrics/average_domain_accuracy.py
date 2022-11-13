@@ -2,11 +2,11 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
+from numpy.typing import ArrayLike
 from torch import Tensor
 from torchmetrics import Metric
-from numpy.typing import ArrayLike
+from torchmetrics.detection.mean_ap import _fix_empty_tensors, _input_validator
 from torchvision.ops import box_convert
-from torchmetrics.detection.mean_ap import _input_validator, _fix_empty_tensors
 
 
 class AverageDomainAccuracy(Metric):
@@ -54,10 +54,9 @@ class AverageDomainAccuracy(Metric):
 
     @staticmethod
     def _accuracy(dts: Tensor, gts: Tensor, iou_thr: int = 0.5) -> float:
-        """
-        Compute accuracy between two tensors. Accuracy is defined as the ratio
-        of the number of true positives to the number of true positives plus the
-        number of false positives plus the number of false negative.
+        """Compute accuracy between two tensors. Accuracy is defined as the
+        ratio of the number of true positives to the number of true positives
+        plus the number of false positives plus the number of false negative.
         The expected format is (x_min, y_min, x_max, y_max)
 
         Args:
@@ -67,6 +66,7 @@ class AverageDomainAccuracy(Metric):
 
         Returns:
             float: Accuracy score.
+
         """
         if len(dts) > 0 and len(gts) > 0:
             pick = AverageDomainAccuracy._get_matches(dts, gts, overlapThresh=iou_thr)
@@ -87,8 +87,7 @@ class AverageDomainAccuracy(Metric):
     def _get_matches(
         gts: ArrayLike, dts: ArrayLike, overlapThresh: Optional[float] = 0.5
     ):
-        """
-        Compute matches between groundtruth and detections.
+        """Compute matches between groundtruth and detections.
 
         Args:
             gts (ArrayLike): Groundtruth boxes.
@@ -97,6 +96,7 @@ class AverageDomainAccuracy(Metric):
 
         Returns:
             List[int]: List of matches.
+
         """
         gts = np.array([np.array(bbox) for bbox in gts])
         boxes = np.array([np.array(bbox) for bbox in dts])

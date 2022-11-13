@@ -2,19 +2,23 @@ from typing import Any, Optional
 
 import torch.nn as nn
 import torchvision.models.detection
-from torchvision.ops import misc as misc_nn_ops
-from torchvision.models.detection.backbone_utils import (
-    resnet_fpn_backbone,
-    _validate_trainable_layers,
-)
 from omegaconf.dictconfig import DictConfig
+from torchvision.models.detection.backbone_utils import (
+    _validate_trainable_layers,
+    resnet_fpn_backbone,
+)
+from torchvision.ops import misc as misc_nn_ops
 
 from models.registry import MODELS
 
 
 @MODELS.register_class
 class FasterRCNN(torchvision.models.detection.FasterRCNN):
-    """Faster R-CNN model. Adapted from torchvision.models.detection.FasterRCNN."""
+    """Faster R-CNN model.
+
+    Adapted from torchvision.models.detection.FasterRCNN.
+
+    """
 
     def __init__(
         self,

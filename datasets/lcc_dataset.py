@@ -4,15 +4,16 @@ from typing import Any, Callable, List, Optional, Tuple
 import cv2
 import numpy as np
 import pandas as pd
-from .file_src_dataset import FileSrcDataset
 
 from datasets.gws_usask import GWSUsask
 from datasets.registry import DATASETS
 
+from .file_src_dataset import FileSrcDataset
+
 
 @DATASETS.register_class
 class LCC2017Dataset(GWSUsask):
-    """The 2017 Leaf Counting Challenge Dataset
+    """The 2017 Leaf Counting Challenge Dataset.
 
     Args:
         root: str
@@ -29,6 +30,7 @@ class LCC2017Dataset(GWSUsask):
             The transformation to apply to the data.
         seed: Optional[int]
             The seed to use for random number generators.
+
     """
 
     def __init__(
@@ -81,7 +83,7 @@ class LCC2017Dataset(GWSUsask):
 
 @DATASETS.register_class
 class LCC2020Dataset(FileSrcDataset):
-    """The 2020 Leaf Counting Challenge Dataset
+    """The 2020 Leaf Counting Challenge Dataset.
 
     Args:
         root: str
@@ -94,6 +96,7 @@ class LCC2020Dataset(FileSrcDataset):
             The transformation to apply to the data.
         seed: Optional[int]
             The seed to use for random number generators.
+
     """
 
     def __init__(
@@ -147,6 +150,7 @@ class LCC2020Dataset(FileSrcDataset):
         Returns:
             List[Tuple[Any, Any]]
                 The list of samples.
+
         """
         file_paths = (
             adf["img_id"]
@@ -178,6 +182,7 @@ class LCC2020Dataset(FileSrcDataset):
         Returns:
             Any
                 The data source.
+
         """
         src_path = root.joinpath(f"{split}.csv")
         df = pd.read_csv(str(src_path), header=None)

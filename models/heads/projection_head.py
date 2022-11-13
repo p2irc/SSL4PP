@@ -4,14 +4,14 @@ import torch
 import torch.nn as nn
 from omegaconf.dictconfig import DictConfig
 
-from models.registry import HEADS
 from models.builder import build_head
+from models.registry import HEADS
 
 
 @HEADS.register_class
 class ProjectionHead(nn.Module):
-    """Combines MLP and Convolutional projection heads in parallell.
-    Used for the Dense Contrastive Learning task.
+    """Combines MLP and Convolutional projection heads in parallell. Used for
+    the Dense Contrastive Learning task.
 
     Args:
         mlp_head (Union[Dict, DictConfig]): A Dict or DictConfig object containing
@@ -19,6 +19,7 @@ class ProjectionHead(nn.Module):
         dense_head (Optional[Union[Dict, DictConfig]]): A Dict or DictConfig object
             containing information about how to build the Dense head.
         grid_size (Optional[int]): The size of the grid to use for the Dense head.
+
     """
 
     def __init__(

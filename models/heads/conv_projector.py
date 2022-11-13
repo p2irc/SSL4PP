@@ -12,6 +12,7 @@ class ConvProjector(nn.Module):
     Args:
         layers (ListConfig): A ListConfig object containing information about
             how to build the layers.
+
     """
 
     def __init__(self, layers: ListConfig) -> None:

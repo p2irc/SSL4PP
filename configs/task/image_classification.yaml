@@ -19,10 +19,9 @@ trainer:
   base_lr: 8e-3
   base_lr_batch_size: 256
   num_epochs: 100
-  use_lars: False  
+  use_lars: False
   step_freq: batch
   mixed_precision: true
   lr_scheduler:
     pct_start: 0.05
     final_div_factor: 5
-  

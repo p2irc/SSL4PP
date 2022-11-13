@@ -3,12 +3,13 @@ import random
 import warnings
 from typing import Optional
 
-import torch
 import numpy as np
+import torch
 
 
 def set_random_seed(seed: int, determinstic: Optional[bool] = False) -> None:
-    """Globally sets a random seed for python, numpy and PyTorch random modules.
+    """Globally sets a random seed for python, numpy and PyTorch random
+    modules.
 
     Args:
         seed (int): value of random seed to set

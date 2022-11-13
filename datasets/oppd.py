@@ -1,14 +1,15 @@
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Callable, Optional, Tuple, List, Dict, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import cv2
-import torch
 import numpy as np
+import torch
 from numpy import ndarray
-from datasets.gwhd_2021 import GWHD2021
 
+from datasets.gwhd_2021 import GWHD2021
 from datasets.registry import DATASETS
+
 from .file_src_dataset import FileSrcDataset
 
 
@@ -29,6 +30,7 @@ class OPPDFull(FileSrcDataset):
             The transformation to apply to the data.
         seed: Optional[int]
             The seed to use for random number generators.
+
     """
 
     def __init__(
@@ -69,7 +71,8 @@ class OPPDFull(FileSrcDataset):
     def make_dataset(
         root: Path, data_src: List[Dict[Any, Any]]
     ) -> List[Tuple[str, Dict[str, ndarray]]]:
-        """Create a list of samples of the dataset containing path-target pairs.
+        """Create a list of samples of the dataset containing path-target
+        pairs.
 
         Args:
             root: Path
@@ -79,6 +82,7 @@ class OPPDFull(FileSrcDataset):
 
         Returns:
             A list of samples of the dataset.
+
         """
         path_target_pair = []
         for idx in range(len(data_src)):
@@ -134,6 +138,7 @@ class OPPDFull(FileSrcDataset):
 
         Returns:
             The modified target.
+
         """
         assert len(crop_points) == 4
 
@@ -187,6 +192,7 @@ class OPPDFull(FileSrcDataset):
 
         Returns:
             The loaded image.
+
         """
         image = cv2.imread(url)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)

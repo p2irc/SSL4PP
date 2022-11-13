@@ -15,6 +15,7 @@ class ResNet(resnet.ResNet):
     Args:
         depth (int): Depth of the ResNet backbone.
         **kwargs: Other arguments.
+
     """
 
     arch_params = {

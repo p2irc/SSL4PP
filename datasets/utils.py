@@ -1,13 +1,13 @@
 import random
-from typing import List, Optional, Tuple, Union
 import warnings
-import cv2
-from matplotlib import pyplot as plt
-import numpy as np
+from typing import List, Optional, Tuple, Union
 
-from sklearn.model_selection import train_test_split
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 from skimage.filters import gaussian
+from sklearn.model_selection import train_test_split
 from torch import Tensor
 
 from datasets.base import Dataset
@@ -36,6 +36,7 @@ def get_random_sample(
     Returns:
         List[Tuple[str, int]]
             A list of tuples containing the path to the image and the target value.
+
     """
 
     assert sampling_method in ["uniform", "stratified", None]
@@ -99,6 +100,7 @@ def plot_sample(
 
     Returns:
         None
+
     """
     assert isinstance(
         nrows_ncols, (tuple, int)
@@ -172,6 +174,7 @@ def generate_density_map(
     Returns:
         np.ndarray
             The density map.
+
     """
     # from: https://towardsdatascience.com/objects-counting-by-estimating-a-density-map-with-convolutional-neural-networks-c01086f3b3ec
 

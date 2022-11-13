@@ -1,4 +1,5 @@
 from omegaconf import DictConfig
+
 from tasks.registry import TASKS
 
 
@@ -7,6 +8,7 @@ def create_task(cfg: DictConfig):
 
     Args:
         cfg (DictConfig): The (hydra) config to be used to build the task class.
+
     """
     task_type = cfg.task.type
     task_class = None

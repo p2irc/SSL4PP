@@ -1,14 +1,16 @@
 from copy import deepcopy
 from typing import Any, List
-from albumentations.core.composition import BaseCompose
 
+from albumentations.core.composition import BaseCompose
 from datasets.registry import TRANSFORMS
 
 
 @TRANSFORMS.register_class
 class TwoCropsTransform(BaseCompose):
     """Take two random crops of one image as the query and key.
+
     https://github.com/facebookresearch/simsiam/blob/main/simsiam/loader.py
+
     """
 
     def __init__(self, base_transform):

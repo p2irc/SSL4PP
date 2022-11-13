@@ -10,7 +10,7 @@ evaluate: False
 val_freq: 1
 model:
   type: DRN
-  backbone: 
+  backbone:
     type: ResNet
     depth: 50
   is_pretrained: ??? # set at runtime, based on checkpoint cfg

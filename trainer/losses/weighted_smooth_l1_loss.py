@@ -1,8 +1,8 @@
 from typing import Optional
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch.nn import SmoothL1Loss
 
 from trainer.registry import LOSSES

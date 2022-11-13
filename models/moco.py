@@ -10,9 +10,7 @@ from models.registry import MODELS
 
 @MODELS.register_class
 class MoCo(nn.Module):
-    """
-    Momentum Contrast.
-    https://arxiv.org/abs/2003.04297v1
+    """Momentum Contrast. https://arxiv.org/abs/2003.04297v1.
 
     The code is adapted from:
     "https://github.com/facebookresearch/moco/blob/master/moco/builder.py".
@@ -24,6 +22,7 @@ class MoCo(nn.Module):
             the information needed to build the projection head.
         queue_len (Optional[int]): number of embeddings in the queue. Defaults to 65536.
         momentum (Optional[float]): momentum value. Default: 0.999.
+
     """
 
     def __init__(
@@ -94,9 +93,10 @@ class MoCo(nn.Module):
 
     @torch.no_grad()
     def _batch_shuffle_ddp(self, x):
-        """
-        Batch shuffle, for making use of BatchNorm.
+        """Batch shuffle, for making use of BatchNorm.
+
         *** Only supports DistributedDataParallel (DDP) model. ***
+
         """
         # gather from all gpus
         batch_size_this = x.shape[0]
@@ -122,9 +122,10 @@ class MoCo(nn.Module):
 
     @torch.no_grad()
     def _batch_unshuffle_ddp(self, x, idx_unshuffle):
-        """
-        Undo batch shuffle.
+        """Undo batch shuffle.
+
         *** Only supports DistributedDataParallel (DDP) model. ***
+
         """
         # gather from all gpus
         batch_size_this = x.shape[0]
@@ -180,9 +181,10 @@ class MoCo(nn.Module):
 # utils
 @torch.no_grad()
 def concat_all_gather(tensor):
-    """
-    Performs all_gather operation on the provided tensors.
+    """Performs all_gather operation on the provided tensors.
+
     *** Warning ***: torch.distributed.all_gather has no gradient.
+
     """
     tensors_gather = [
         torch.ones_like(tensor) for _ in range(torch.distributed.get_world_size())

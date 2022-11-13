@@ -4,9 +4,10 @@ from typing import NamedTuple, Tuple, Union
 import torch.nn
 from omegaconf import DictConfig
 
-from .base import Task
-from tasks.registry import TASKS
 import utils.distributed as dist_utils
+from tasks.registry import TASKS
+
+from .base import Task
 
 
 @TASKS.register_class
@@ -15,6 +16,7 @@ class ContrastiveLearning(Task):
 
     Args:
         cfg (DictConfig): Hydra config object.
+
     """
 
     def __init__(self, cfg: DictConfig) -> None:
@@ -32,8 +34,7 @@ class ContrastiveLearning(Task):
     def load_pretrained_checkpoint(
         model: torch.nn.Module, url: str, replacement_key: str
     ) -> Tuple[torch.nn.Module, NamedTuple]:
-        r"""
-        Load a pretrained model from a checkpoint.
+        r"""Load a pretrained model from a checkpoint.
 
         Args:
             model (torch.nn.Module): model to load pretrained weights on to.
@@ -42,6 +43,7 @@ class ContrastiveLearning(Task):
         Returns:
             model: model with pretrained weights loaded
             msg: a NamedTuple containing missing keys and unexpected keys
+
         """
         print("Loading pretrained checkpoint: '{}'".format(url))
         msg = None

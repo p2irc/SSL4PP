@@ -4,6 +4,7 @@ from typing import Any, Callable, List, Optional, Tuple, Union
 import cv2
 
 from datasets.base import Dataset
+
 from .utils import get_random_sample
 
 
@@ -21,6 +22,7 @@ class TestDataset(Dataset):
             The transformation to apply to the data.
         seed: Optional[int] = None
             The seed to use for the random number generator.
+
     """
 
     IMG_EXTENSIONS = (

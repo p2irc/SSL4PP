@@ -4,9 +4,10 @@ See: https://github.com/SeungjunNah/DeepDeblur-PyTorch/blob/master/src/data/samp
 and https://discuss.pytorch.org/t/how-to-validate-in-distributeddataparallel-correctly/94267/11
 """
 import math
+
 import torch
-from torch.utils.data import Sampler
 import torch.distributed as dist
+from torch.utils.data import Sampler
 
 
 class DistributedEvalSampler(Sampler):
@@ -100,11 +101,13 @@ class DistributedEvalSampler(Sampler):
         return self.num_samples
 
     def set_epoch(self, epoch):
-        r"""
-        Sets the epoch for this sampler. When :attr:`shuffle=True`, this ensures all replicas
+        r"""Sets the epoch for this sampler.
+
+        When :attr:`shuffle=True`, this ensures all replicas
         use a different random ordering for each epoch. Otherwise, the next iteration of this
         sampler will yield the same ordering.
         Arguments:
             epoch (int): _epoch number.
+
         """
         self.epoch = epoch

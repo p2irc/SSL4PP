@@ -4,10 +4,10 @@ import torch
 from omegaconf import DictConfig
 from wandb.sdk.wandb_run import Run
 
-from tasks.base import Task
-from tasks.registry import TASKS
-from tasks.classification import ImageClassification
 import datasets.builder as dataset_builder
+from tasks.base import Task
+from tasks.classification import ImageClassification
+from tasks.registry import TASKS
 
 
 @TASKS.register_class
@@ -17,6 +17,7 @@ class LinearEvaluation(ImageClassification):
     Args:
         cfg: Hydra config object.
         **kwargs: Additional arguments.
+
     """
 
     def __init__(self, cfg: DictConfig, **kwargs: Any) -> None:

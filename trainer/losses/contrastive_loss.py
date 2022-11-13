@@ -1,5 +1,7 @@
 from typing import Any
+
 import torch
+
 from trainer.registry import LOSSES
 
 

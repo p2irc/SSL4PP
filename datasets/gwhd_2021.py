@@ -2,16 +2,17 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import cv2
-import torch
 import numpy as np
 import pandas as pd
-from torch import Tensor
+import torch
 from numpy import ndarray
+from torch import Tensor
 
-from .image_dataset_folder import ImageDatasetFolder
-from .file_src_dataset import FileSrcDataset
-from .utils import get_random_sample
 from datasets.registry import DATASETS
+
+from .file_src_dataset import FileSrcDataset
+from .image_dataset_folder import ImageDatasetFolder
+from .utils import get_random_sample
 
 
 @DATASETS.register_class
@@ -30,6 +31,7 @@ class GWHD2021(FileSrcDataset):
             The transformation to apply to the data.
         seed: Optional[int]
             The seed to use for the random number generator.
+
     """
 
     def __init__(
@@ -86,6 +88,7 @@ class GWHD2021(FileSrcDataset):
                 samples to use. If a float, the percentage of samples to use.
             split: str
                 The split of the dataset to use. One of "train", "val", "test".
+
         """
         ImageDatasetFolder._validate_input("uniform", sample_size)
         assert split in ["train", "val", "test"], f"{split} split is not supported"
@@ -100,6 +103,7 @@ class GWHD2021(FileSrcDataset):
 
         Returns:
             The image as a numpy array.
+
         """
         image = cv2.imread(file_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -119,6 +123,7 @@ class GWHD2021(FileSrcDataset):
 
         Returns:
             The dataset as a list of tuples of the form (image_path, target).
+
         """
         filenames = data_src["image_name"].values
         boxes = [GWHD2021.decodeString(item) for item in data_src["BoxesString"].values]
@@ -159,6 +164,7 @@ class GWHD2021(FileSrcDataset):
 
         Returns:
             The target dictionary with all the values converted to tensors.
+
         """
         GWHD2021._check_target(target)
 
@@ -187,6 +193,7 @@ class GWHD2021(FileSrcDataset):
         Args:
             target: Dict[str, Any]
                 The target dictionary.
+
         """
         assert (
             set(["boxes", "labels", "area", "iscrowd"]) - set(list(target.keys()))
@@ -223,9 +230,7 @@ class GWHD2021(FileSrcDataset):
 
     @staticmethod
     def decodeString(box_str: str):
-        """
-        Small method to decode the BoxesString
-        """
+        """Small method to decode the BoxesString."""
         if box_str == "no_box":
             return np.zeros((0, 4))
         else:

@@ -6,14 +6,14 @@ import torch.distributed as dist
 
 
 def init_distributed_mode(launcher: str, backend: str) -> None:
-    """
-    Launches distributed training based on given launcher and backend.
+    """Launches distributed training based on given launcher and backend.
 
     Args:
         launcher (str): {'pytorch', 'slurm'} Specifies if pytorch launch utitlity
             (torch.distributed.run) is being used or if running on a SLURM cluster.
         backend (str): {'nccl', 'gloo', 'mpi'} Specifies which backend to use
             when initializing a process group.
+
     """
     if launcher == "pytorch":
         launch_pytorch_dist(backend)
@@ -46,8 +46,8 @@ def launch_pytorch_dist(backend: str) -> None:
 
 
 def launch_slurm_dist(backend: str) -> None:
-    """Initializes a distributed process group when process are spawned
-    in a SLURM cluster (using the srun and sbatch commands).
+    """Initializes a distributed process group when process are spawned in a
+    SLURM cluster (using the srun and sbatch commands).
 
     Args:
         backend (str): {'nccl', 'gloo', 'mpi'} Specifies which backend to use
@@ -77,10 +77,11 @@ def launch_slurm_dist(backend: str) -> None:
 # the following functions were adapted from:
 # https://github.com/pytorch/vision/blob/main/references/classification/utils.py
 def disable_non_master_print():
-    """
-    Disables printing if not master process. However, printing can be forced
-    by adding a boolean flag, 'force', to the keyword arguments to the print
-    function call.
+    """Disables printing if not master process.
+
+    However, printing can be forced by adding a boolean flag, 'force',
+    to the keyword arguments to the print function call.
+
     """
     import builtins as __builtin__
 
@@ -95,18 +96,18 @@ def disable_non_master_print():
 
 
 def is_dist_avail_and_initialized() -> bool:
-    """
-    Returns True if the PyTorch distribued package is available
-    and a distributed process group has been initialized
-    """
+    """Returns True if the PyTorch distribued package is available and a
+    distributed process group has been initialized."""
     return dist.is_available() and dist.is_initialized()
 
 
 def get_world_size() -> int:
-    """
-    Returns the total number of processes that have been initialized
-    in a distributed process group. It returns 1 if the PyTorch distribued
-    package is unavailable or the default process group has not been initialized.
+    """Returns the total number of processes that have been initialized in a
+    distributed process group.
+
+    It returns 1 if the PyTorch distribued package is unavailable or the
+    default process group has not been initialized.
+
     """
     if not is_dist_avail_and_initialized():
         return 1
@@ -114,10 +115,12 @@ def get_world_size() -> int:
 
 
 def get_rank() -> int:
-    """
-    Returns the global rank of the current process in the default distribued
-    process group. Returns 0 if the PyTorch distribued package is unavailable
-    or the default process group has not been initialized.
+    """Returns the global rank of the current process in the default distribued
+    process group.
+
+    Returns 0 if the PyTorch distribued package is unavailable or the
+    default process group has not been initialized.
+
     """
     if not is_dist_avail_and_initialized():
         return 0
@@ -125,9 +128,11 @@ def get_rank() -> int:
 
 
 def is_main_process() -> bool:
-    """
-    Checks if the current process in the default process group is the Master
-    proces. The master process typically has a rank of 0.
+    """Checks if the current process in the default process group is the Master
+    proces.
+
+    The master process typically has a rank of 0.
+
     """
     return not is_dist_avail_and_initialized() or get_rank() == 0
 

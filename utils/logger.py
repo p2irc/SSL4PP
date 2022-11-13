@@ -1,21 +1,22 @@
-"""
-The classes defined in this script were originally implemented in the torchvision
-classification references:
+"""The classes defined in this script were originally implemented in the
+torchvision classification references:
+
 https://github.com/pytorch/vision/blob/main/references/classification/utils.py
+
 """
-import time
 import datetime
+import time
 from collections import defaultdict, deque
 
 import torch
 import torch.distributed as dist
+
 import utils.distributed
 
 
 class SmoothedValue(object):
     """Track a series of values and provide access to smoothed values over a
-    window or the global series average.
-    """
+    window or the global series average."""
 
     def __init__(self, window_size=20, fmt=None):
         if fmt is None:

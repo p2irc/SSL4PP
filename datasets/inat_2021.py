@@ -1,14 +1,14 @@
 import warnings
 from pathlib import Path
-from typing import Any, Callable, Optional, Tuple, List, Dict, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import cv2
 import PIL
 from numpy import ndarray
 
-from .registry import DATASETS
 from .file_src_dataset import FileSrcDataset
 from .image_dataset_folder import ImageDatasetFolder
+from .registry import DATASETS
 from .utils import get_random_sample
 
 
@@ -32,6 +32,7 @@ class INat2021(FileSrcDataset):
             The transformation to apply to the data.
         seed: Optional[int]
             The seed to use for the random number generator.
+
     """
 
     def __init__(
@@ -145,6 +146,7 @@ class INat2021(FileSrcDataset):
                 The class labels in the data.
             class_to_idx: Dict[str, int]
                 A mapping from class label to class index.
+
         """
         categories = metadata["categories"]
 
@@ -179,6 +181,7 @@ class INat2021(FileSrcDataset):
         Returns:
             samples: List[Tuple[str, int]]
                 A list of samples of the form (image path, class index).
+
         """
         instances = []
         annotations = metadata.get("annotations")

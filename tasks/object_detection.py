@@ -1,17 +1,18 @@
 import time
 from typing import Any, Dict, Optional, Tuple, Union
 
-import torch
 import pandas as pd
+import torch
 from omegaconf import DictConfig
-from wandb.sdk.wandb_run import Run
 from torchmetrics import MetricCollection
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
+from wandb.sdk.wandb_run import Run
+
+from tasks.registry import TASKS
+from trainer.metrics import AverageDomainAccuracy
+from utils.logger import MetricLogger
 
 from .base import Task
-from tasks.registry import TASKS
-from utils.logger import MetricLogger
-from trainer.metrics import AverageDomainAccuracy
 
 
 @TASKS.register_class
@@ -24,6 +25,7 @@ class ObjectDetection(Task):
     Attributes:
         best_eval_score (float): Best evaluation score.
         is_best_ckpt (bool): Whether the current checkpoint is the best.
+
     """
 
     def __init__(self, cfg: DictConfig, **kwargs: Any) -> None:
@@ -138,6 +140,7 @@ class ObjectDetection(Task):
 
         Returns:
             Dict[str, Union[torch.Tensor, float]]: Processed results.
+
         """
         eval_results = dict()
         for name, value in results.items():
@@ -151,9 +154,8 @@ class ObjectDetection(Task):
 
 
 def collate_fn(batch):
-    """
-    Since each image may have a different number of objects, we need a collate
-    function (to be passed to the DataLoader).
+    """Since each image may have a different number of objects, we need a
+    collate function (to be passed to the DataLoader).
 
     Args:
         batch: an iterable of N sets from __getitem__()
@@ -161,6 +163,7 @@ def collate_fn(batch):
     Returns:
         a tensor of images, lists of varying-size tensors of bounding boxes,
         labels, and difficulties
+
     """
 
     images = list()

@@ -10,7 +10,7 @@ model:
   type: MoCo
   queue_len: 65536
   momentum: 0.999
-  backbone: 
+  backbone:
     type: ResNet
     depth: 50
     zero_init_residual: True
@@ -37,6 +37,6 @@ trainer:
   base_lr: 0.03
   base_lr_batch_size: 256
   num_epochs: 200
-  use_lars: False  
+  use_lars: False
   step_freq: batch
   mixed_precision: True

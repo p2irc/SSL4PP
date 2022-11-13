@@ -1,29 +1,29 @@
-import os
-import sys
 import math
 import ntpath
-from pathlib import Path
-from copy import deepcopy
+import os
+import sys
 from abc import ABC, abstractmethod
+from copy import deepcopy
+from pathlib import Path
 from typing import Any, Dict, Optional, OrderedDict, Tuple, Union
 
 import torch.nn
-from torch import Tensor
-from omegaconf import DictConfig
-from wandb.sdk.wandb_run import Run
 from hydra.utils import to_absolute_path
+from omegaconf import DictConfig
+from torch import Tensor
+from wandb.sdk.wandb_run import Run
 
-import utils.distributed as dist_utils
+import datasets.builder as dataset_builder
 import models.builder as model_builder
 import trainer.builder as trainer_builder
-import datasets.builder as dataset_builder
+import utils.distributed as dist_utils
 from utils.logger import MetricLogger, SmoothedValue
 
 
 class Task(ABC):
-    """Abstract class for instantiating a learning task.
-    A task includes a dataset and dataloader, a model, an optimizer,
-    a learning rate scheduler, a loss function and, optionally, some performance metrics.
+    """Abstract class for instantiating a learning task. A task includes a
+    dataset and dataloader, a model, an optimizer, a learning rate scheduler, a
+    loss function and, optionally, some performance metrics.
 
     Args:
         cfg (DictConfig): a hydra config object.
@@ -170,7 +170,11 @@ class Task(ABC):
 
     @abstractmethod
     def get_loss(self, *args, **kwargs) -> Union[float, torch.Tensor]:
-        """Computes the loss for the current batch. Sum multiple losses if necessary."""
+        """Computes the loss for the current batch.
+
+        Sum multiple losses if necessary.
+
+        """
 
     @abstractmethod
     def get_train_metrics(self, *args, **kwargs) -> Dict[str, Any]:
@@ -182,8 +186,8 @@ class Task(ABC):
 
     @staticmethod
     def _load_state_dict(url: str) -> OrderedDict[str, Tensor]:
-        """Loads a model's state_dict from the given URL.
-        The URL can be a path to a file or a weblink.
+        """Loads a model's state_dict from the given URL. The URL can be a path
+        to a file or a weblink.
 
         Args:
             url (str): Path to file or weblink
@@ -194,6 +198,7 @@ class Task(ABC):
 
         Returns:
            OrderedDict[str, Tensor]: The state_dict, if successfully loaded.
+
         """
         if url.startswith("http") or os.path.isfile(url):
             if os.path.isfile(url):
@@ -211,9 +216,9 @@ class Task(ABC):
     def _update_state_dict(
         state_dict: OrderedDict, replacement_key: str
     ) -> OrderedDict[str, Tensor]:
-        """Update the given state dict by renaming the keys to match
-        the current model where appropriate. This function is designed
-        around MoCo v2, DenseCL and Faster-RCNN models.
+        """Update the given state dict by renaming the keys to match the
+        current model where appropriate. This function is designed around MoCo
+        v2, DenseCL and Faster-RCNN models.
 
         Args:
             state_dict (Dict): The(pretrained) model state_dict
@@ -222,6 +227,7 @@ class Task(ABC):
 
         Returns:
             Dict[str, Tensor]: The updated state_dict
+
         """
         new_state_dict = deepcopy(state_dict)
         for k in list(state_dict.keys()):
@@ -305,8 +311,7 @@ class Task(ABC):
     def load_pretrained_checkpoint(
         model: torch.nn.Module, url: str, replacement_key: str
     ) -> torch.nn.Module:
-        r"""
-        Load a pretrained model from a checkpoint.
+        r"""Load a pretrained model from a checkpoint.
 
         Args:
             model (torch.nn.Module): model to load pretrained weights on to.
@@ -316,6 +321,7 @@ class Task(ABC):
 
         Returns:
             model: model with pretrained weights loaded
+
         """
         print("Loading pretrained checkpoint: '{}'".format(url))
         try:
@@ -337,10 +343,8 @@ class Task(ABC):
         return model
 
     def load_model_to_device(self) -> None:
-        """
-        Wrap the model in DistributedDataParallel or DataParallel if using multiple
-        GPUs, then load model to the GPU(s).
-        """
+        """Wrap the model in DistributedDataParallel or DataParallel if using
+        multiple GPUs, then load model to the GPU(s)."""
         if self.in_dist_mode:
             if self.cfg.distributed.get("sync_bn"):
                 self.model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(self.model)
@@ -370,9 +374,7 @@ class Task(ABC):
             self.model.cuda()
 
     def get_model_parameters(self):
-        """
-        Returns the model parameter groups to be optimized.
-        """
+        """Returns the model parameter groups to be optimized."""
         return [p for p in self.model.parameters() if p.requires_grad]
 
     def get_wandb_log_data(self, **kwargs) -> Dict[str, Any]:
@@ -452,6 +454,7 @@ class Task(ABC):
 
         Returns:
             None
+
         """
         if mode not in ["train", "eval"]:
             raise ValueError("mode must be train or eval")
@@ -529,8 +532,7 @@ class Task(ABC):
             self.train_metrics.reset()
 
     def resume_from_checkpoint(self, url: str) -> None:
-        """
-        Resume trained from a given checkpoint.
+        """Resume trained from a given checkpoint.
 
         Args:
             url (str): URL of pretrained checkpoint
@@ -588,13 +590,13 @@ class Task(ABC):
     def save_on_master(
         self, epoch: int, keep_latest_only: bool = True, **kwargs: Any
     ) -> None:
-        """
-        Save checkpoint on the master process.
+        """Save checkpoint on the master process.
 
         Args:
             epoch (int): Current epoch
             keep_latest_only (bool): Whether to keep only the latest checkpoint
             kwargs (Any): optional keyword arguments
+
         """
         if dist_utils.is_main_process():
             checkpoint_dir = self.cfg.checkpoint.get("dir", "checkpoints")
