@@ -1,0 +1,19 @@
+# @package _global_
+defaults:
+  - /task/dataset: inat_2021
+  - override /task: densecl
+  - override /task/optimizer@task.trainer.optimizer: sgd
+  - override /task/lr_scheduler@task.trainer.lr_scheduler: cosine_lr
+  - override /task/dataset/transform@task.dataset.train_split.transform: moco_v2
+
+experiment_name: ???
+log_freq: 450
+task:
+  dataset:
+    supercategory: Plants
+  trainer:
+    num_epochs: 223 # matches 200 epochs of imagenet in number of iterations
+checkpoint:
+  keep_latest_only: true
+wandb:
+  project: ssl-pretraining

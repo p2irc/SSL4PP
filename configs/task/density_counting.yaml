@@ -1,0 +1,25 @@
+defaults:
+  - dataset: gws_usask
+  - loss@trainer.loss: drn_loss
+  - optimizer@trainer.optimizer: adam
+  - lr_scheduler@trainer.lr_scheduler: cosine_lr
+
+type: DensityCounting
+eval_only_at_end: False
+evaluate: False
+val_freq: 1
+model:
+  type: DRN
+  backbone: 
+    type: ResNet
+    depth: 50
+  is_pretrained: ??? # set at runtime, based on checkpoint cfg
+dataloader:
+    global_batch_size: 8
+    num_workers: 4 # per GPU
+    drop_last: False
+trainer:
+  base_lr: 1e-4
+  num_epochs: 200
+  step_freq: batch
+  mixed_precision: true

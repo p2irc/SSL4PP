@@ -1,0 +1,23 @@
+# @package _global_
+defaults:
+  - override /task: object_detection
+  - override /task/dataset: oppd
+  - override /task/optimizer@task.trainer.optimizer: sgd
+  - override /task/lr_scheduler@task.trainer.lr_scheduler: multi_step_lr
+
+log_freq: 150
+task:
+  val_freq: 4
+  eval_only_at_end: False
+  dataloader:
+    global_batch_size: 8
+    num_workers: 4
+  trainer:
+    base_lr: 1e-3
+    num_epochs: 32
+    step_freq: batch
+    lr_scheduler:
+      milestones: [17000, 22000]
+      warmup_steps: 1500
+wandb:
+  project: oppd-plant-detection

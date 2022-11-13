@@ -1,0 +1,11 @@
+type: OneCycleLR
+pct_start: 0.3
+anneal_strategy: cos
+cycle_momentum: true
+base_momentum: 0.85
+max_momentum: 0.95
+div_factor: 25
+final_div_factor: 10
+three_phase: false
+# max_lr will be determined at runtime
+# total_step and steps_per_epoch will be calculated in the script

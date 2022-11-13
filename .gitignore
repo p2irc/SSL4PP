@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+*__pycache__*
+
+# logs / development artifacts
+dev.ipynb
+output
+wandb
+dump
+
+# other
+*.DS_Store
+.vscode
+*.ipynb_checkpoints
+apex
+otdd
+OTDD
+src
+pytorch-image-models
+
+# large data
+data

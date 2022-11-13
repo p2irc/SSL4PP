@@ -1,0 +1,22 @@
+# @package _global_
+defaults:
+  - override /task: object_detection
+  - override /task/dataset: gwhd_2021
+  - override /task/optimizer@task.trainer.optimizer: sgd
+  - override /task/lr_scheduler@task.trainer.lr_scheduler: multi_step_lr
+
+log_freq: 45
+task:
+  val_freq: 4
+  dataloader:
+    global_batch_size: 8
+    num_workers: 4
+  trainer:
+    base_lr: 1e-3
+    num_epochs: 48
+    step_freq: batch
+    lr_scheduler:
+      milestones: [14592, 20064]
+      warmup_steps: 500
+wandb:
+  project: wheat-head-detection

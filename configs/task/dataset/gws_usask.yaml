@@ -1,0 +1,12 @@
+defaults:
+  - transform@train_split.transform: hflip_norm
+  - transform@test_split.transform: norm_aug
+
+type: GWSUsask
+root: data/GWS_USask
+subset: 0
+pyramid_level: 3
+train_split:
+  split: train
+test_split:
+  split: test

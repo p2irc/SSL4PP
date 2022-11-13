@@ -1,0 +1,2 @@
+type: ContrastiveLoss
+temperature: 0.2

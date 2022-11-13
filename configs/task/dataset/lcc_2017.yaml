@@ -1,0 +1,13 @@
+defaults:
+  - transform@train_split.transform: hflip_norm
+  - transform@test_split.transform: norm_aug
+
+type: LCC2017Dataset
+root: data/CVPPP2017_LCC_training/training
+folder: 'A4'
+subset: 0
+pyramid_level: 3
+train_split:
+  split: train
+test_split:
+  split: test

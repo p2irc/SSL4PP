@@ -1,0 +1,31 @@
+# @package _global_
+defaults:
+  - /task/dataset: inat_2021
+  - override /task: image_classification
+  - override /task/loss@task.trainer.loss: cross_entropy
+  - override /task/optimizer@task.trainer.optimizer: adam
+  - override /task/lr_scheduler@task.trainer.lr_scheduler: one_cycle_lr
+  - override /task/dataset/transform@task.dataset.train_split.transform: train_preset
+
+experiment_name: ???
+log_freq: 200
+task:
+  dataset:
+    supercategory: Plants
+  dataloader:
+    global_batch_size: 1024
+    num_workers: 4
+  # losely based on https://arxiv.org/pdf/2110.00476.pdf
+  trainer:
+    base_lr: 8e-3
+    num_epochs: 100
+    step_freq: batch
+    base_lr_batch_size: 2048
+    optimizer:
+      weight_decay: 0.02
+    lr_scheduler:
+      pct_start: 0.05
+      div_factor: 25
+      final_div_factor: 1
+wandb:
+  project: supervised-pretraining

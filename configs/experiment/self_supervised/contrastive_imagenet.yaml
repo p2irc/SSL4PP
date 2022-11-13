@@ -1,0 +1,20 @@
+# @package _global_
+defaults:
+  - /task/dataset: imagenet
+  - override /task: densecl
+  - override /task/optimizer@task.trainer.optimizer: sgd
+  - override /task/lr_scheduler@task.trainer.lr_scheduler: cosine_lr
+  - override /task/dataset/transform@task.dataset.train_split.transform: moco_v2
+
+experiment_name: ???
+log_freq: 500
+distributed:
+  launcher: slurm
+checkpoint:
+  keep_latest_only: false
+  save_freq: 100
+task:
+  trainer:
+    num_epochs: 200
+wandb:
+  project: ssl-pretraining

@@ -1,0 +1,10 @@
+defaults:
+  - transform@train_split.transform: hflip_norm
+  - transform@test_split.transform: norm_aug
+
+type: GWHD2021
+root: data/gwhd_2021
+train_split:
+  split: train
+test_split:
+  split: val

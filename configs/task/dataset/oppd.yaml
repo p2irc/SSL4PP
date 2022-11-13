@@ -1,0 +1,26 @@
+type: OPPDFull
+root: data/OPPD-master/DATA/images_full
+crop_out_black_pixels: True
+subset: 0
+train_split:
+  split: train
+  transform:
+  - type: Resize
+    width: 1024
+    height: 1024
+  - type: HorizontalFlip
+    p: 0.5
+  - type: Normalize
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+  - type: ToTensorV2
+test_split:
+  split: test
+  transform:
+  - type: Resize
+    width: 1024
+    height: 1024
+  - type: Normalize
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+  - type: ToTensorV2
