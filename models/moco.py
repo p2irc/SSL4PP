@@ -42,7 +42,7 @@ class MoCo(nn.Module):
         momentum: Optional[float] = 0.999,
     ) -> None:
         """Init method."""
-        super(MoCo, self).__init__()
+        super().__init__()
 
         self.encoder_q = self._build_encoder(backbone, head)
         self.encoder_k = self._build_encoder(backbone, head)

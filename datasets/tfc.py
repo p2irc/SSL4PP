@@ -56,7 +56,7 @@ class TFC(FileSrcDataset):
         if split == "train":
             src_path = self.root.joinpath(f"tfc{subset}_{split}.csv")
         else:
-            src_path = self.root.joinpath((f"tfc_{split}.csv"))
+            src_path = self.root.joinpath(f"tfc_{split}.csv")
         data_src = self.load_from_csv(src_path)
 
         self.classes = data_src["label"].astype("category").cat.categories.values

@@ -6,7 +6,7 @@ from typing import Callable, Dict, Optional, Union
 from omegaconf.dictconfig import DictConfig
 
 
-class Registry(object):
+class Registry:
     """Factory for creating registries.
 
     This class is used to create registries, which are used to register

@@ -209,10 +209,9 @@ class GWHD2021(FileSrcDataset):
                 The target dictionary.
 
         """
-        assert (
-            set(["boxes", "labels", "area", "iscrowd"]) - set(list(target.keys()))
-            == set()
-        )
+        assert {"boxes", "labels", "area", "iscrowd"} - set(
+            list(target.keys())
+        ) == set()
 
     def __getitem__(self, index: int) -> Tuple[ndarray, Dict]:
         """Get the image and target at the given index."""

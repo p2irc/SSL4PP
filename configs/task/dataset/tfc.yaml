@@ -2,8 +2,8 @@ defaults:
   - transform@train_split.transform: moco_v2
   - transform@test_split.transform: test_preset
 
-type: UWFC
-root: data/uwfc_2020
+type: TFC
+root: data/tfc_2020
 subset: 2
 train_split:
   split: train

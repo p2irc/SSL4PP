@@ -16,7 +16,7 @@ import torch.distributed as dist
 import utils.distributed
 
 
-class SmoothedValue(object):
+class SmoothedValue:
     """Maintain a smoothed value over a window or number of iterations.
 
     Track a series of values and provide access to smoothed values over a
@@ -99,7 +99,7 @@ class SmoothedValue(object):
         )
 
 
-class MetricLogger(object):
+class MetricLogger:
     r"""Log training progress.
 
     Args:

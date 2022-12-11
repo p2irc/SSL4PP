@@ -68,7 +68,7 @@ class FileSrcDataset(Dataset):
 
         """
         assert src_path.exists()
-        with open(src_path, "r") as f:
+        with open(src_path) as f:
             data_src = json.load(f)
 
         return data_src
