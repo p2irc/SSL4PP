@@ -1,3 +1,10 @@
+"""Base class for instantiating a learning task.
+
+A task includes a dataset and dataloader, a model, an optimizer, a
+learning rate scheduler, a loss function and, optionally, some
+performance metrics.
+
+"""
 import math
 import ntpath
 import os
@@ -21,34 +28,16 @@ from utils.logger import MetricLogger, SmoothedValue
 
 
 class Task(ABC):
-    """Abstract class for instantiating a learning task. A task includes a
-    dataset and dataloader, a model, an optimizer, a learning rate scheduler, a
-    loss function and, optionally, some performance metrics.
+    """Abstract class for instantiating a learning task.
 
     Args:
-        cfg (DictConfig): a hydra config object.
-
-    Attributes:
-        cfg (DictConfig): a hydra config object containing all the information
-            needed to set up the learning task.
-        datasets (Dict[str, Any]): a dictionary containing the dataset objects.
-        model (torch.nn.Module): the model to be trained.
-        train_loader (torch.utils.data.DataLoader): the dataloader for the training set.
-        test_loader (torch.utils.data.DataLoader): the dataloader for the test set.
-        optimizer (torch.optim.Optimizer): the optimizer used to train the model.
-        lr_scheduler (torch.optim.lr_scheduler._LRScheduler): the learning rate scheduler.
-        criterion (torch.nn.Module): the loss function.
-        train_metrics (MetricLogger): a metric logger for the training set.
-        test_metrics (MetricLogger): a metric logger for the test set.
-        scaler (torch.cuda.amp.GradScaler): a scaler for mixed precision training.
-        device_id (int): the id of the GPU to be used.
-        in_dist_mode (bool): whether the task is running in distributed mode.
-        wandb_run (wandb.sdk.wandb_run.Run): a wandb run object.
-        batch_size (int): the batch size.
+        cfg: DictConfig
+            A Hydra config object.
 
     """
 
     def __init__(self, cfg: DictConfig, **kwargs: Any) -> None:
+        """Init method."""
         self._cfg = cfg
         rand_seed = self.cfg.get("seed")
 
@@ -134,17 +123,17 @@ class Task(ABC):
 
     @property
     def cfg(self) -> DictConfig:
-        """Returns the config object."""
+        """The config object."""
         return self._cfg
 
     @property
     def init_lr(self) -> float:
-        """Returns the initial learning rate."""
+        """The initial learning rate."""
         return self._init_lr
 
     @property
     def batch_size(self) -> int:
-        """Returns the global batch size."""
+        """The global batch size."""
         return self._batch_size
 
     @property
@@ -156,7 +145,7 @@ class Task(ABC):
 
     @property
     def device_id(self) -> int:
-        """Returns the device id of the current process."""
+        """The device id of the current process."""
         if self.in_dist_mode:
             device_id = torch.cuda.current_device()
         else:
@@ -165,12 +154,12 @@ class Task(ABC):
 
     @abstractmethod
     def prepare_input(self, *args, **kwargs) -> Tuple:
-        """Prepares the input for the model forward pass."""
+        """Prepare the input for the model forward pass."""
         raise NotImplementedError
 
     @abstractmethod
     def get_loss(self, *args, **kwargs) -> Union[float, torch.Tensor]:
-        """Computes the loss for the current batch.
+        """Compute the loss for the current batch.
 
         Sum multiple losses if necessary.
 
@@ -178,26 +167,30 @@ class Task(ABC):
 
     @abstractmethod
     def get_train_metrics(self, *args, **kwargs) -> Dict[str, Any]:
-        """Computes the metrics for the current batch during training."""
+        """Compute the metrics for the current batch during training."""
 
     @abstractmethod
     def evaluate(self, *args, **kwargs) -> Any:
-        """Evaluates the model on the validation/test set."""
+        """Evaluate the model on the validation/test set."""
 
     @staticmethod
     def _load_state_dict(url: str) -> OrderedDict[str, Tensor]:
-        """Loads a model's state_dict from the given URL. The URL can be a path
-        to a file or a weblink.
+        """Load a model's state_dict from the given URL.
+
+        The URL can be a path to a file or a weblink.
 
         Args:
-            url (str): Path to file or weblink
-
-        Raises:
-            FileNotFoundError: If the URL does not start with `http` or
-            the file at the given path does not exist.
+            url: str
+                Path to file or weblink to the state_dict.
 
         Returns:
-           OrderedDict[str, Tensor]: The state_dict, if successfully loaded.
+            state:dict: OrderedDict[str, Tensor]
+                The state_dict, if successfully loaded.
+
+        Raises:
+            FileNotFoundError:
+                If the URL does not start with `http` or the file at the given
+                path does not exist.
 
         """
         if url.startswith("http") or os.path.isfile(url):
@@ -216,17 +209,21 @@ class Task(ABC):
     def _update_state_dict(
         state_dict: OrderedDict, replacement_key: str
     ) -> OrderedDict[str, Tensor]:
-        """Update the given state dict by renaming the keys to match the
-        current model where appropriate. This function is designed around MoCo
-        v2, DenseCL and Faster-RCNN models.
+        """Update the state dict.
+
+        Rename the keys to match the current model where appropriate. This
+        function is designed around MoCo v2, DenseCL and Faster-RCNN models.
 
         Args:
-            state_dict (Dict): The(pretrained) model state_dict
-            replacement_key (str): The string to append to or remove from the state_dict keys
-            where necessary.
+            state_dict: Dict
+                The(pretrained) model state_dict
+            replacement_key: str
+                The string to append to or remove from the state_dict keys where
+                necessary.
 
         Returns:
-            Dict[str, Tensor]: The updated state_dict
+            new_state_dict: Dict[str, Tensor]
+                The updated state_dict
 
         """
         new_state_dict = deepcopy(state_dict)
@@ -314,13 +311,16 @@ class Task(ABC):
         r"""Load a pretrained model from a checkpoint.
 
         Args:
-            model (torch.nn.Module): model to load pretrained weights on to.
-            url (str): URL of pretrained checkpoint
-            replacement_key (str): The string to append to state_dict keys
-            where necessary.
+            model: torch.nn.Module
+                model to load pretrained weights on to.
+            url: str
+                URL of pretrained checkpoint
+            replacement_key: str
+                The string to append to state_dict keys where necessary.
 
         Returns:
-            model: model with pretrained weights loaded
+            model: torch.nn.Module
+                model with pretrained weights loaded
 
         """
         print("Loading pretrained checkpoint: '{}'".format(url))
@@ -343,8 +343,12 @@ class Task(ABC):
         return model
 
     def load_model_to_device(self) -> None:
-        """Wrap the model in DistributedDataParallel or DataParallel if using
-        multiple GPUs, then load model to the GPU(s)."""
+        """Load model to device.
+
+        Wrap the model in DistributedDataParallel or DataParallel if
+        using multiple GPUs, then load model to the GPU(s).
+
+        """
         if self.in_dist_mode:
             if self.cfg.distributed.get("sync_bn"):
                 self.model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(self.model)
@@ -374,11 +378,11 @@ class Task(ABC):
             self.model.cuda()
 
     def get_model_parameters(self):
-        """Returns the model parameter groups to be optimized."""
+        """Return the model parameter groups to be optimized."""
         return [p for p in self.model.parameters() if p.requires_grad]
 
     def get_wandb_log_data(self, **kwargs) -> Dict[str, Any]:
-        """Returns the data to be logged to wandb."""
+        """Return the data to be logged to wandb."""
         return kwargs
 
     def run(self, wandb_logger: Optional[Run] = None):
@@ -445,15 +449,19 @@ class Task(ABC):
         """Train the model for one epoch.
 
         Args:
-            epoch (int): current epoch
-            wandb_logger (Optional[Run], optional): wandb logger. Defaults to None.
-            mode (Optional[str], optional): train or eval. Defaults to "train".
-
-        Raises:
-            ValueError: if mode is not train or val
+            epoch: int
+                The current epoch.
+            wandb_logger: Run, optional
+                Logger for Weights & Biases.
+            mode, str, optional
+                Mode for model. One of ``train`` or ``eval``.
 
         Returns:
             None
+
+        Raises:
+            ValueError:
+                If mode is not train or val
 
         """
         if mode not in ["train", "eval"]:
@@ -535,7 +543,8 @@ class Task(ABC):
         """Resume trained from a given checkpoint.
 
         Args:
-            url (str): URL of pretrained checkpoint
+            url: str
+                URL of pretrained checkpoint
 
         """
         start_epoch = 0
@@ -593,9 +602,12 @@ class Task(ABC):
         """Save checkpoint on the master process.
 
         Args:
-            epoch (int): Current epoch
-            keep_latest_only (bool): Whether to keep only the latest checkpoint
-            kwargs (Any): optional keyword arguments
+            epoch: int
+                Current epoch.
+            keep_latest_only: bool
+                Whether to keep only the latest checkpoint.
+            kwargs: Any
+                Optional keyword arguments.
 
         """
         if dist_utils.is_main_process():

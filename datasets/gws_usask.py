@@ -1,3 +1,4 @@
+"""The Global Wheat Spikelet Usask dataset."""
 from pathlib import Path
 from typing import Any, Callable, List, Optional, OrderedDict, Tuple
 
@@ -39,6 +40,7 @@ class GWSUsask(FileSrcDataset):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
+        """Initialize the dataset."""
         super().__init__(root, transform, seed)
 
         assert split in ["train", "test"]
@@ -56,17 +58,21 @@ class GWSUsask(FileSrcDataset):
 
     @property
     def num_classes(self) -> int:
+        """The number of classes in the dataset."""
         return len(self.classes)
 
     @property
     def samples(self) -> Tuple[List[str], Any]:
+        """The samples in the dataset."""
         return self._samples
 
     def __len__(self) -> int:
+        """The number of samples in the dataset."""
         return len(self.samples)
 
     @staticmethod
     def make_dataset(root: Path, data_src: List) -> List[Tuple[Any, Any]]:
+        """Generate the dataset."""
         path_target_pair = []
         for data in data_src:
             filename = root.joinpath(data["image"])
@@ -101,6 +107,7 @@ class GWSUsask(FileSrcDataset):
         return target
 
     def __getitem__(self, index: int) -> Any:
+        """Get an item from the dataset."""
         file_path, keypoints = self.samples[index]
 
         # load image

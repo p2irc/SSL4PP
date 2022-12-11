@@ -1,3 +1,4 @@
+"""A generic dataset object for loading images in a folder."""
 import os
 import warnings
 from pathlib import Path
@@ -13,7 +14,9 @@ from .utils import get_random_sample
 
 
 class ImageDatasetFolder(Dataset):
-    """A generic dataset that can load images with a folder structure like:
+    """Dataset object for loading images in a folder.
+
+    A generic dataset that can load images with a folder structure like:
     root/class_name/img.ext.
 
     Args:
@@ -31,15 +34,8 @@ class ImageDatasetFolder(Dataset):
             The seed to use for the random number generator.
 
     Attributes:
-        classes: List[str]
-            The list of classes in the dataset.
-        class_to_idx: Dict[str, int]
-            The mapping from class name to class index.
-        idx_to_class: Dict[int, str]
-            The mapping from class index to class name.
-        samples: List[Tuple[List[str], Any]]
-            The list of samples in the dataset. Each sample is a tuple of
-            (file_path, target).
+        IMG_EXTENSIONS: Tuple[str]
+            The image extensions that are supported.
 
     """
 
@@ -65,6 +61,7 @@ class ImageDatasetFolder(Dataset):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
+        """Init method."""
         super().__init__(root, transform, seed)
 
         self._validate_input(sampling_method, sample_size)
@@ -78,16 +75,20 @@ class ImageDatasetFolder(Dataset):
 
     @property
     def num_classes(self):
+        """Number of classes in the dataset."""
         return len(self.classes)
 
     @property
     def samples(self) -> Tuple[List[str], Any]:
+        """List of samples in the dataset."""
         return self._samples
 
     def __len__(self):
+        """Number of samples in the dataset."""
         return len(self.samples)
 
     def __getitem__(self, index: int) -> Tuple[np.ndarray, int]:
+        """Get a sample from the dataset at the given index."""
         file_path, target = self.samples[index]
 
         # pylint: disable=no-member
@@ -126,6 +127,7 @@ class ImageDatasetFolder(Dataset):
 
     @staticmethod
     def find_classes(root: Path) -> Tuple[List[str], Dict[str, int]]:
+        """Find the class folders in the dataset."""
         classes = sorted(entry.name for entry in root.iterdir() if entry.is_dir())
         class_to_idx = {cls_name: idx for idx, cls_name in enumerate(classes)}
 
@@ -133,6 +135,7 @@ class ImageDatasetFolder(Dataset):
 
     @staticmethod
     def make_dataset(root: Path, class_to_idx: Dict[str, int]) -> List[Tuple[str, int]]:
+        """Create a list of samples in the dataset."""
         path_target_pair = []
         for ext in ImageDatasetFolder.IMG_EXTENSIONS:
             filepaths = list(root.glob(f"*{os.sep}*{ext}"))

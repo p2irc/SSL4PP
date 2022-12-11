@@ -1,3 +1,4 @@
+"""Registry for trainer components."""
 import sys
 
 sys.path.append("..")

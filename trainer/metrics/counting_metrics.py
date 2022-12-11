@@ -1,3 +1,4 @@
+"""Metrics for counting tasks."""
 from typing import Dict, List, Optional, OrderedDict
 
 import torch
@@ -9,7 +10,7 @@ from torchmetrics.functional import mean_absolute_error, mean_squared_error, r2_
 def _input_validator(
     preds: OrderedDict[str, Tensor], targets: OrderedDict[str, Tensor]
 ):
-    """Ensure the correct input format of `preds` and `targets`"""
+    """Ensure the correct input format of `preds` and `targets`."""
     if not isinstance(preds, OrderedDict):
         raise ValueError("Expected argument `preds` to be of type OrderedDict")
     if not isinstance(targets, OrderedDict):
@@ -32,10 +33,25 @@ def _input_validator(
 
 
 class CountingMetrics(Metric):
+    """Metrics for counting tasks.
+
+    Args:
+        compute_on_step: bool
+            Whether to compute the metrics on each step or not.
+
+    Attributes:
+        groundtruth_counts: List[Tensor]
+            The groundtruth counts.
+        predicted_counts: List[Tensor]
+            The predicted counts.
+
+    """
+
     groundtruth_counts: List[Tensor]
     predicted_counts: List[Tensor]
 
     def __init__(self, compute_on_step: Optional[bool] = False, **kwargs) -> None:
+        """Init method."""
         super().__init__(compute_on_step=compute_on_step, **kwargs)
 
         self.add_state("groundtruth_counts", default=[], dist_reduce_fx=None)
@@ -44,6 +60,7 @@ class CountingMetrics(Metric):
     def update(
         self, preds: OrderedDict[str, Tensor], target: OrderedDict[str, Tensor]
     ) -> None:
+        """Update the metric state."""
         _input_validator(preds, target)
 
         self.predicted_counts.extend(
@@ -52,6 +69,7 @@ class CountingMetrics(Metric):
         self.groundtruth_counts.extend(target["count"])
 
     def compute(self) -> Dict[str, float]:
+        """Compute the metrics."""
         self.groundtruth_counts = torch.as_tensor(self.groundtruth_counts)
         self.predicted_counts = torch.as_tensor(self.predicted_counts)
 

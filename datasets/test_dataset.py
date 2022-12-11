@@ -1,3 +1,4 @@
+"""A generic dataset for loading images in a folder."""
 from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple, Union
 
@@ -23,6 +24,10 @@ class TestDataset(Dataset):
         seed: Optional[int] = None
             The seed to use for the random number generator.
 
+    Attributes:
+        IMG_EXTENSIONS: Tuple[str]
+            The extensions of the images to load.
+
     """
 
     IMG_EXTENSIONS = (
@@ -46,6 +51,7 @@ class TestDataset(Dataset):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
+        """Initialize the dataset."""
         super().__init__(root, transform, seed)
         paths = [
             (filepath,)
@@ -56,16 +62,20 @@ class TestDataset(Dataset):
 
     @property
     def num_classes(self) -> int:
+        """The number of classes in the dataset."""
         return -1
 
     @property
     def samples(self) -> List[Tuple[List[str]]]:
+        """The samples in the dataset."""
         return self._samples
 
     def __len__(self) -> int:
+        """The number of samples in the dataset."""
         return len(self.samples)
 
     def __getitem__(self, index: int) -> Any:
+        """Get a sample from the dataset."""
         file_path = str(self.samples[index][0])
 
         # pylint: disable=no-member

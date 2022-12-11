@@ -1,3 +1,4 @@
+"""Registry for datasets and transforms."""
 import sys
 
 sys.path.append("..")

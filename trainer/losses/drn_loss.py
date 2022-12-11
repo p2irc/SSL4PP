@@ -1,3 +1,4 @@
+"""Loss for the DRN model."""
 from typing import Any, Dict, List, OrderedDict
 
 import torch
@@ -10,8 +11,7 @@ from .weighted_smooth_l1_loss import WeightedSmoothL1Loss
 
 
 def _input_validator(preds: List, targets: List):
-    # print(preds)
-    # print(targets)
+    """Input validator."""
     assert "count" in targets.keys()
     for i in range(1, 6):
         assert i in targets.keys()
@@ -21,14 +21,23 @@ def _input_validator(preds: List, targets: List):
 
 @LOSSES.register_class
 class DRNLoss:
+    """Loss for the DRN model.
+
+    Args:
+        weight: float
+            The weight to use for the weighted smooth L1 loss.
+
+    """
+
     def __init__(self, weight: float) -> None:
+        """Init method."""
         self.det_loss = WeightedSmoothL1Loss(weight=weight)
         self.reg_loss = L1Loss()
 
     def __call__(
         self, output: OrderedDict[Any, Tensor], targets: OrderedDict[Any, Tensor]
     ) -> Dict[str, Tensor]:
-
+        """Forward method."""
         _input_validator(output, targets)
         loss_dict = {}
 

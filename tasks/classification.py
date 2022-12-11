@@ -1,3 +1,4 @@
+"""Image classification task."""
 import shutil
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Union
@@ -19,15 +20,19 @@ class ImageClassification(Task):
     """Task for image classification.
 
     Args:
-        cfg (DictConfig): Config object.
+        cfg (DictConfig):
+            Config object.
 
     Attributes:
-        best_eval_score (float): Best evaluation score.
-        is_best_ckpt (bool): Whether the current checkpoint is the best.
+        best_eval_score (float):
+            Best evaluation score.
+        is_best_ckpt (bool):
+            Whether the current checkpoint is the best.
 
     """
 
     def __init__(self, cfg: DictConfig, **kwargs: Any) -> None:
+        """Init method."""
         super().__init__(cfg)
         metric_dict = {
             "top1_acc": Accuracy(),
@@ -48,10 +53,12 @@ class ImageClassification(Task):
         self.best_eval_score = 0
 
     def prepare_input(self, **kwargs) -> Tuple:
+        """Prepare the input for the model."""
         images = kwargs["images"].cuda(self.device_id, non_blocking=True)
         return (images,)
 
     def get_loss(self, **kwargs) -> Union[float, torch.Tensor]:
+        """Get the loss."""
         outputs = kwargs["outputs"]
         targets = (
             kwargs["targets"]
@@ -62,6 +69,7 @@ class ImageClassification(Task):
         return loss
 
     def get_train_metrics(self, **kwargs) -> Dict[str, Any]:
+        """Get the metrics for training."""
         predicitions = kwargs["preds"]
         targets = (
             kwargs["targets"]
@@ -74,6 +82,7 @@ class ImageClassification(Task):
         return metrics
 
     def evaluate(self, wandb_logger: Optional[Run] = None, **kwargs):
+        """Evaluate the model."""
         # switch to evaluate mode
         self.model.eval()
 
@@ -139,6 +148,14 @@ class ImageClassification(Task):
     def save_on_master(
         self, epoch: int, keep_latest_only: bool = True, **kwargs: Any
     ) -> None:
+        """Save the model on the master process.
+
+        Args:
+            epoch (int): Current epoch.
+            keep_latest_only (bool): Whether to keep only the latest checkpoint.
+            kwargs (Any): Additional arguments.
+
+        """
         super().save_on_master(epoch, keep_latest_only, **kwargs)
 
         # save the best model

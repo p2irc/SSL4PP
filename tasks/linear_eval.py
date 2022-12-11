@@ -1,3 +1,4 @@
+"""Linear evaluation task."""
 from typing import Any, Optional
 
 import torch
@@ -15,12 +16,15 @@ class LinearEvaluation(ImageClassification):
     """Task for linear evaluation.
 
     Args:
-        cfg: Hydra config object.
-        **kwargs: Additional arguments.
+        cfg: DictConfig
+            Hydra config object.
+        **kwargs: Any
+            Additional arguments.
 
     """
 
     def __init__(self, cfg: DictConfig, **kwargs: Any) -> None:
+        """Init method."""
         super().__init__(cfg, **kwargs)
         self.train_loader, self.test_loader = dataset_builder.load_datasets(
             self.datasets,
@@ -37,6 +41,20 @@ class LinearEvaluation(ImageClassification):
     def load_pretrained_checkpoint(
         model: torch.nn.Module, url: str, replacement_key: str
     ) -> torch.nn.Module:
+        """Load a pretrained checkpoint.
+
+        Args:
+            model: torch.nn.Module
+                Model to load checkpoint into.
+            url: str
+                URL of checkpoint.
+            replacement_key: str
+                Key to replace in checkpoint.
+
+        Returns:
+            Model with loaded checkpoint.
+
+        """
         model = Task.load_pretrained_checkpoint(model, url, replacement_key)
 
         # freeze all layers but the last fc
@@ -51,4 +69,5 @@ class LinearEvaluation(ImageClassification):
         return model
 
     def train_one_epoch(self, epoch: int, wandb_logger: Optional[Run] = None):
+        """Train one epoch."""
         super().train_one_epoch(epoch, wandb_logger, mode="eval")

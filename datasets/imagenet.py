@@ -1,3 +1,4 @@
+"""ImageNet dataset."""
 from pathlib import Path
 from typing import Callable, Optional, Union
 
@@ -38,7 +39,7 @@ class ImageNet(ImageDatasetFolder):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
-
+        """Initialize the dataset."""
         assert split in ["train", "val"], "Only train and val splits are supported"
         root = str(Path(root).resolve().joinpath(split))
         super().__init__(root, sample_size, sampling_method, transform, seed)

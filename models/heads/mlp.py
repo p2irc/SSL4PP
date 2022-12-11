@@ -1,3 +1,4 @@
+"""Multi-Layer Perceptron projection head."""
 import torch
 import torch.nn as nn
 from omegaconf.listconfig import ListConfig
@@ -10,12 +11,14 @@ class MLP(nn.Module):
     """Multi-Layer Perceptron projection head.
 
     Args:
-        layers (ListConfig): A ListConfig object containing information about
-            how to build the layers.
+        layers (ListConfig):
+            A ListConfig object containing information about how to build the
+            layers.
 
     """
 
     def __init__(self, layers: ListConfig) -> None:
+        """Init method."""
         super().__init__()
         layer_list = []
         for layer in layers:
@@ -43,12 +46,10 @@ class MLP(nn.Module):
                     nn.init.constant_(module.bias, 0)
 
     def forward(self, batch: torch.Tensor):
-        """
+        """Forward pass implementation.
+
         from: https://github.com/facebookresearch/vissl/blob/main/vissl/models/heads/mlp.py
-        Args:
-            batch (torch.Tensor): 2D torch tensor or 4D tensor of shape `N x C x 1 x 1`
-        Returns:
-            out (torch.Tensor): 2D output torch tensor
+
         """
         if isinstance(batch, list):
             assert (

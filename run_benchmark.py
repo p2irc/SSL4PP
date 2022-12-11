@@ -1,3 +1,4 @@
+"""Run a benchmark for a task."""
 from pathlib import Path
 
 import hydra
@@ -11,10 +12,10 @@ import wandb
 
 @hydra.main(config_path="configs", config_name="config")
 def main(cfg: DictConfig):
-    """Run a benchmark on a task.
+    """Run a benchmark for a task.
 
     Args:
-        cfg (DictConfig): Hydra config object.
+        cfg: A Hydra config object.
 
     """
     utils.misc.set_random_seed(cfg.get("seed"), cfg.get("deterministic", False))

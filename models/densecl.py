@@ -1,3 +1,4 @@
+"""DenseCL model."""
 from typing import Optional
 
 import torch
@@ -14,12 +15,16 @@ class DenseCL(MoCo):
     """Dense Contrastive Learning. https://arxiv.org/abs/2011.09157.
 
     Args:
-        backbone (Union[Dict, DictConfig]): a hydra config object containing all
-            the information needed to build the backbone.
-        head (Union[Dict, DictConfig]): a hydra config object containing all
-            the information needed to build the projection head.
-        queue_len (Optional[int]): number of embeddings in the queue. Defaults to 65536.
-        momentum (Optional[float]): momentum value. Defaults to 0.999.
+        backbone: Union[Dict, DictConfig
+            A hydra config object containing all the information needed to build
+            the backbone.
+        head: Union[Dict, DictConfig]
+            A hydra config object containing all the information needed to build
+            the projection head.
+        queue_len: int, default=65536
+            number of embeddings in the queue.
+        momentum: float, default=0.999
+            momentum value.
 
     """
 
@@ -30,6 +35,7 @@ class DenseCL(MoCo):
         queue_len: Optional[int] = 65536,
         momentum: Optional[float] = 0.999,
     ) -> None:
+        """Init method."""
         super().__init__(backbone, head, queue_len, momentum)
 
         # create the second queue for dense output
@@ -44,7 +50,7 @@ class DenseCL(MoCo):
 
     @staticmethod
     def _build_encoder(backbone_cfg: DictConfig, projector_cfg: DictConfig):
-        """Builds the encoder."""
+        """Build the encoder."""
         backbone = builder.build_backbone(backbone_cfg)
         backbone.avgpool = nn.Identity()
         backbone.fc = nn.Identity()

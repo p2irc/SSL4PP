@@ -1,3 +1,4 @@
+"""Factory for building datasets and transforms."""
 import random
 import warnings
 from copy import deepcopy
@@ -21,14 +22,16 @@ from .transforms import TwoCropsTransform
 def build_dataset(
     cfg: DictConfig, task_type: str, seed: Optional[int] = None
 ) -> Dict[str, Any]:
-    """Builds the training and test datasets based on the given configuration
-    and task type.
+    """Build training and test datasets.
 
     Args:
-        cfg (DictConfig): a hydra config object containing all the information
-            needed to build the dataset
-        task_type (str): The type of task the dataset is for.
-        seed (int): random seed for random sampler
+        cfg: DictConfig)
+            A hydra config object containing all the information needed to build
+            the dataset
+        task_type: str
+            The type of task the dataset is used for.
+        seed: int
+            The random seed for random sampler.
 
     Return:
         A dictionary with two keys, train and test, representing the training
@@ -64,12 +67,12 @@ def build_dataset(
 
 
 def build_transforms(cfg: Union[ListConfig, List]) -> List:
-    """Build an Albumentations data augmentation pipeline based on the given
-    config.
+    """Build an Albumentations data augmentation pipeline.
 
     Args:
-        cfg (Union[ListConfig, List]): a hydra config object or a list containing
-        all the information needed to build the augmentation pipeline.
+        cfg: Union[ListConfig, List]:
+            A hydra config object or a list containing all the information
+            needed to build the augmentation pipeline.
 
     Return:
         A list of Alubmentations objects
@@ -102,8 +105,10 @@ def _compose_transforms(transform_list: List, task_type: str) -> A.Compose:
     """Composes an Albumentations pipeline based on the type of task.
 
     Args:
-        transform_list (List): A list of Albumentations classes.
-        task_type (str): The type of task the transform pipeline is for.
+        transform_list: List
+            A list of Albumentations classes.
+        task_type: str
+            The type of task the transform pipeline is for.
 
     Return:
         A compose object.
@@ -138,16 +143,21 @@ def load_datasets(
     seed: Optional[int] = None,
     **kwargs: Any,
 ) -> Tuple[DataLoader, DataLoader]:
-    """Initializes the PyTorch Dataloader object for the training and test
-    datasets.
+    """Initialize the PyTorch Dataloader object for the given dataset(s).
 
     Args:
-        datasets (Dict): a dictionary containing the train and test datasets.
-        batch_size (int): number of samples per batch to be loaded.
-        num_workers (int): the number of processors to be used for data loading.
-        seed (int): random seed for deterministic data loading.
-        drop_last (bool): Drop the last incomplete batch for the training dataset
-        kwargs (Any): Optional arguments.
+        datasets: Dict
+            A dictionary containing the train and test datasets.
+        batch_size: int
+            The number of samples per batch to be loaded.
+        num_workers: int
+            The number of processors to be used for data loading.
+        seed: int
+            The random seed for deterministic data loading.
+        drop_last: bool
+            Whether to drop the last incomplete batch for the training dataset.
+        kwargs: Any
+            Additional keyword arguments to be passed to the DataLoader object.
             Example: collate_fn -> a custom function for creating batches.
 
     Return:
@@ -209,13 +219,16 @@ def worker_init_fn(worker_id: int, num_workers: int, rank: int, seed: int) -> No
     """A function to initilaze dataloader workers.
 
     Args:
-        worker_id (int): ID of the worker process.
-        num_workers (int): total number of workers that will be initialized.
-        rank (int): the rank of the current process.
-        seed (int): a random seed used determine the worker seed.
+        worker_id: int
+            ID of the worker process.
+        num_workers: int
+            Total number of workers that will be initialized.
+        rank: int
+            The rank of the current process.
+        seed: int
+            A random seed used determine the worker seed.
 
     """
-    # from: https://github.com/SwinTransformer/Swin-Transformer-Object-Detection/blob/master/mmdet/datasets/builder.py
     worker_seed = num_workers * rank + worker_id + seed
     np.random.seed(worker_seed)
     random.seed(worker_seed)

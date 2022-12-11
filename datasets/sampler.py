@@ -1,7 +1,9 @@
-"""
+"""Sampler for distributed evaluation.
+
 Acknowledgement: The original author of this script is Seungjun Nah
 See: https://github.com/SeungjunNah/DeepDeblur-PyTorch/blob/master/src/data/sampler.py
 and https://discuss.pytorch.org/t/how-to-validate-in-distributeddataparallel-correctly/94267/11
+
 """
 import math
 
@@ -11,7 +13,8 @@ from torch.utils.data import Sampler
 
 
 class DistributedEvalSampler(Sampler):
-    r"""
+    r"""Sampler for distributed evaluation.
+
     DistributedEvalSampler is different from DistributedSampler.
     It does NOT add extra samples to make it evenly divisible.
     DistributedEvalSampler should NOT be used for training. The distributed processes could hang forever.
@@ -27,24 +30,29 @@ class DistributedEvalSampler(Sampler):
     original dataset that is exclusive to it.
     .. note::
         Dataset is assumed to be of constant size.
-    Arguments:
-        dataset: Dataset used for sampling.
-        num_replicas (int, optional): Number of processes participating in
-            distributed training. By default, :attr:`rank` is retrieved from the
-            current distributed group.
-        rank (int, optional): Rank of the current process within :attr:`num_replicas`.
-            By default, :attr:`rank` is retrieved from the current distributed
-            group.
-        shuffle (bool, optional): If ``True`` (default), sampler will shuffle the
-            indices.
-        seed (int, optional): random seed used to shuffle the sampler if
-            :attr:`shuffle=True`. This number should be identical across all
-            processes in the distributed group. Default: ``0``.
+
+    Args:
+        dataset:
+            Dataset used for sampling.
+        num_replicas (int, optional):
+            Number of processes participating in distributed training. By
+            default, :attr:`rank` is retrieved from the current distributed group.
+        rank (int, optional):
+            Rank of the current process within :attr:`num_replicas`. By default,
+            :attr:`rank` is retrieved from the current distributed group.
+        shuffle (bool, optional):
+            If ``True`` (default), sampler will shuffle the indices.
+        seed (int, optional):
+            Random seed used to shuffle the sampler if :attr:`shuffle=True`.
+            This number should be identical across all processes in the
+            distributed group. Default: ``0``.
+
     .. warning::
-        In distributed mode, calling the :meth`set_epoch(epoch) <set_epoch>` method at
-        the beginning of each epoch **before** creating the :class:`DataLoader` iterator
-        is necessary to make shuffling work properly across multiple epochs. Otherwise,
-        the same ordering will be always used.
+        In distributed mode, calling the :meth`set_epoch(epoch) <set_epoch>`
+        method at the beginning of each epoch **before** creating the
+        :class:`DataLoader` iterator is necessary to make shuffling work properly
+        across multiple epochs. Otherwise, the same ordering will be always used.
+
     Example::
         >>> sampler = DistributedSampler(dataset) if is_distributed else None
         >>> loader = DataLoader(dataset, shuffle=(sampler is None),
@@ -53,9 +61,11 @@ class DistributedEvalSampler(Sampler):
         ...     if is_distributed:
         ...         sampler.set_epoch(epoch)
         ...     train(loader)
+
     """
 
     def __init__(self, dataset, num_replicas=None, rank=None, shuffle=False, seed=0):
+        """Initialization."""
         if num_replicas is None:
             if not dist.is_available():
                 raise RuntimeError("Requires distributed package to be available")
@@ -79,6 +89,7 @@ class DistributedEvalSampler(Sampler):
         self.seed = seed
 
     def __iter__(self):
+        """Iterator."""
         if self.shuffle:
             # deterministically shuffle based on epoch and seed
             g = torch.Generator()
@@ -98,16 +109,19 @@ class DistributedEvalSampler(Sampler):
         return iter(indices)
 
     def __len__(self):
+        """Number of samples."""
         return self.num_samples
 
     def set_epoch(self, epoch):
-        r"""Sets the epoch for this sampler.
+        r"""Set the epoch for this sampler.
 
         When :attr:`shuffle=True`, this ensures all replicas
         use a different random ordering for each epoch. Otherwise, the next iteration of this
         sampler will yield the same ordering.
-        Arguments:
-            epoch (int): _epoch number.
+
+        Args:
+            epoch: int
+                Epoch number.
 
         """
         self.epoch = epoch

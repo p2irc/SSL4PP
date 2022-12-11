@@ -1,3 +1,4 @@
+"""The TerraByte Field Crop Dataset."""
 from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple, Union
 
@@ -13,8 +14,8 @@ from .utils import get_random_sample
 
 
 @DATASETS.register_class
-class UWFC(FileSrcDataset):
-    """The University of Winnipeg Field Crop Dataset.
+class TFC(FileSrcDataset):
+    """The TerraByte Field Crop Dataset.
 
     Args:
         root: str
@@ -47,14 +48,15 @@ class UWFC(FileSrcDataset):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
+        """Initialize the dataset."""
         super().__init__(root, transform, seed)
 
         self._validate_input(split, subset)
 
         if split == "train":
-            src_path = self.root.joinpath(f"uwfc{subset}_{split}.csv")
+            src_path = self.root.joinpath(f"tfc{subset}_{split}.csv")
         else:
-            src_path = self.root.joinpath((f"uwfc_{split}.csv"))
+            src_path = self.root.joinpath((f"tfc_{split}.csv"))
         data_src = self.load_from_csv(src_path)
 
         self.classes = data_src["label"].astype("category").cat.categories.values
@@ -68,17 +70,21 @@ class UWFC(FileSrcDataset):
 
     @property
     def num_classes(self):
+        """Number of classes in the dataset."""
         return len(self.classes)
 
     @property
     def samples(self) -> Tuple[List[str], Any]:
+        """The samples in the dataset."""
         return self._samples
 
     def __len__(self):
+        """Number of samples in the dataset."""
         return len(self.samples)
 
     @staticmethod
     def _validate_input(split: str, subset: int):
+        """Validate the input."""
         assert split in [
             "train",
             "val",
@@ -90,6 +96,7 @@ class UWFC(FileSrcDataset):
     def make_dataset(
         root: Path, adf: pd.DataFrame, split: str
     ) -> List[Tuple[Any, Any]]:
+        """Make the dataset."""
         adf["image_id"] = [
             str(root.joinpath(split, row[1], row[0]))
             for row in adf.itertuples(index=False)
@@ -99,6 +106,7 @@ class UWFC(FileSrcDataset):
         return path_target_pairs
 
     def __getitem__(self, index: int) -> Tuple[ndarray, int]:
+        """Get an item from the dataset."""
         file_path, target = self.samples[index]
 
         # pylint: disable=no-member

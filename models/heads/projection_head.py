@@ -1,3 +1,4 @@
+"""Projection head for the Dense Contrastive Learning task."""
 from typing import Dict, Optional, Union
 
 import torch
@@ -10,15 +11,19 @@ from models.registry import HEADS
 
 @HEADS.register_class
 class ProjectionHead(nn.Module):
-    """Combines MLP and Convolutional projection heads in parallell. Used for
-    the Dense Contrastive Learning task.
+    """Combine MLP and Convolutional projection heads in parallell.
+
+    Used for the Dense Contrastive Learning task.
 
     Args:
-        mlp_head (Union[Dict, DictConfig]): A Dict or DictConfig object containing
-            information about how to build the MLP head.
-        dense_head (Optional[Union[Dict, DictConfig]]): A Dict or DictConfig object
-            containing information about how to build the Dense head.
-        grid_size (Optional[int]): The size of the grid to use for the Dense head.
+        mlp_head (Union[Dict, DictConfig]):
+            A Dict or DictConfig object containing information about how to build
+            the MLP head.
+        dense_head (Optional[Union[Dict, DictConfig]]):
+            A Dict or DictConfig object containing information about how to build
+            the Dense head.
+        grid_size (Optional[int]):
+            The size of the grid to use for the Dense head.
 
     """
 
@@ -28,6 +33,7 @@ class ProjectionHead(nn.Module):
         dense_head: Optional[Union[Dict, DictConfig]] = None,
         grid_size: Optional[int] = None,
     ) -> None:
+        """Init method."""
         super().__init__()
 
         self.mlp_head = build_head(mlp_head)

@@ -1,7 +1,6 @@
-"""Detection and Regression Network (DRN) from
-https://www.frontiersin.org/articles/10.3389/fpls.2021.575751/full.
+"""Detection and Regression Network (DRN).
 
-Hacked together by Franklin Ogidi
+Based on: https://www.frontiersin.org/articles/10.3389/fpls.2021.575751/full.
 
 """
 from collections import OrderedDict
@@ -21,23 +20,27 @@ from models.registry import MODELS
 
 @MODELS.register_class
 class DRN(nn.Module):
-    """Detection and Regression Network. Adapted from:
-    https://www.frontiersin.org/articles/10.3389/fpls.2021.575751/full.
+    """Detection and Regression Network.
 
     Args:
-        backbone (DictConfig): Config for the backbone, has to contain:
-            - type (str): Key to registry.
-        num_classes (int): Number of classes to predict.
-        is_pretrained (bool): Whether to load pretrained weights.
-        trainable_backbone_layers (int): Number of trainable layers in the backbone.
-        spatial_nms_kernel_size (int): Size of the spatial NMS kernel.
-        spatial_nms_stride (int): Stride of the spatial NMS kernel.
-        spatial_nms_beta (float): Beta parameter for spatial NMS.
-        smooth_step_func_thresh (Tuple[float, float]): Thresholds for the smooth step function.
-        smooth_step_func_betas (Tuple[float, float]): Betas for the smooth step function.
-
-    Returns:
-        OrderedDict[str, Tensor]: Heatmaps and count.
+        backbone (DictConfig):
+            Config for the backbone, has to contain ``type`` keyword.
+        num_classes (int):
+            Number of classes to predict.
+        is_pretrained (bool):
+            Whether to load pretrained weights.
+        trainable_backbone_layers (int):
+            Number of trainable layers in the backbone.
+        spatial_nms_kernel_size (int):
+            Size of the spatial NMS kernel.
+        spatial_nms_stride (int):
+            Stride of the spatial NMS kernel.
+        spatial_nms_beta (float):
+            Beta parameter for spatial NMS.
+        smooth_step_func_thresh (Tuple[float, float]):
+            Thresholds for the smooth step function.
+        smooth_step_func_betas (Tuple[float, float]):
+            Betas for the smooth step function.
 
     """
 
@@ -53,6 +56,7 @@ class DRN(nn.Module):
         smooth_step_func_thresh: Tuple[float, float] = (0.4, 0.8),
         smooth_step_func_betas: Tuple[float, float] = (1, 15),
     ) -> None:
+        """Init method."""
         super().__init__()
         assert backbone["type"] == "ResNet", "Only the ResNet backbone is supported."
         assert backbone["depth"] in [18, 34, 50, 101, 152]
@@ -82,6 +86,7 @@ class DRN(nn.Module):
         )
 
     def forward(self, images: Tensor) -> OrderedDict[str, Tensor]:
+        """Forward pass."""
         features = self.backbone(images)  # returns P3, P4, P5, pool
         feat4, heat_maps = self.det_head(features["0"])
         count = self.count_reg(feat4, heat_maps[-1])
@@ -91,9 +96,18 @@ class DRN(nn.Module):
 
 
 class DetectionHead(nn.Module):
-    """Detection head for DRN."""
+    """Detection head for DRN.
+
+    Args:
+        in_channels (int):
+            Number of input channels.
+        num_classes (int):
+            Number of classes to predict.
+
+    """
 
     def __init__(self, in_channels: int, num_classes: int) -> None:
+        """Init method."""
         super().__init__()
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels, in_channels, 3, padding=1), nn.ReLU(inplace=True)
@@ -131,6 +145,7 @@ class DetectionHead(nn.Module):
                     torch.nn.init.zeros_(m.bias)
 
     def forward(self, x: Tensor) -> Tuple[Tensor]:
+        """Forward pass."""
         feat1 = self.conv1(x)
         feat2 = self.conv2(feat1)
         feat3 = self.conv2(feat2)
@@ -146,7 +161,25 @@ class DetectionHead(nn.Module):
 
 
 class RegressionHead(nn.Module):
-    """Regression head for DRN."""
+    """Regression head for DRN.
+
+    This head is used to predict the number of objects in the image.
+
+    Args:
+        num_classes: int
+            Number of classes.
+        spatial_nms_kernel_size: int
+            Size of the kernel used in the spatial NMS.
+        spatial_nms_stride: int
+            Stride of the kernel used in the spatial NMS.
+        spatial_nms_beta: float
+            Beta parameter of the spatial NMS.
+        smooth_step_func_thresh: Tuple[float, float]
+            Thresholds of the smooth step function.
+        smooth_step_func_betas: Tuple[float, float]
+            Betas of the smooth step function.
+
+    """
 
     def __init__(
         self,
@@ -157,6 +190,7 @@ class RegressionHead(nn.Module):
         smooth_step_func_thresh: Tuple[float, float] = (0.4, 0.8),
         smooth_step_func_betas: Tuple[float, float] = (1, 15),
     ) -> None:
+        """Init method."""
         super().__init__()
         self.gap = nn.AdaptiveAvgPool2d((1, 1))
         self.smooth_step_func1 = SmoothStepFunction(
@@ -172,6 +206,7 @@ class RegressionHead(nn.Module):
         self.fc = nn.LazyLinear(out_features=num_classes)
 
     def forward(self, conv4_out: Tensor, final_heat_map: Tensor) -> Tensor:
+        """Forward pass."""
         gap_feat = self.gap(conv4_out)  # BxCx1x1
         gap_feat = torch.flatten(gap_feat, 1)
 
@@ -187,14 +222,26 @@ class RegressionHead(nn.Module):
 
 
 class SpatialNMS(nn.Module):
-    """Spatial Non-Maximum Suppression module."""
+    """Spatial Non-Maximum Suppression module.
+
+    Args:
+        kernel_size: int, default=3
+            Size of the max pooling kernel.
+        stride: int, default=1
+            Stride of the max pooling operation.
+        beta: float, default=1
+            Beta value for the exponential function.
+
+    """
 
     def __init__(self, kernel_size: int = 3, stride: int = 1, beta: float = 1):
+        """Init method."""
         super().__init__()
         self.maxpool = nn.MaxPool2d(kernel_size, stride, padding=1)
         self.beta = beta
 
     def forward(self, x: Tensor) -> Tensor:
+        """Forward pass."""
         p = x
         q = self.maxpool(p)
         abs_p_sub_q = torch.abs(torch.subtract(p, q))
@@ -203,15 +250,25 @@ class SpatialNMS(nn.Module):
 
 
 class SmoothStepFunction(nn.Module):
-    """Smooth step function module."""
+    """Smooth step function module.
+
+    Args:
+        threshold: float, default=0.8
+            Threshold value for the smooth step function.
+        beta: float, default=15
+            Beta value for the smooth step function.
+
+    """
 
     def __init__(self, threshold: float = 0.8, beta: float = 15):
+        """Init method."""
         super().__init__()
         self.beta = beta
         self.threshold = threshold
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x: Tensor) -> Tensor:
+        """Forward pass."""
         return self.sigmoid((x - (torch.ones_like(x) * self.threshold)) * self.beta)
 
 
@@ -219,7 +276,9 @@ class GlobalSumPool2D(nn.Module):
     """Global sum pooling module."""
 
     def __init__(self):
+        """Init method."""
         super().__init__()
 
     def forward(self, x: Tensor) -> Tensor:
+        """Forward pass."""
         return torch.sum(x, dim=(2, 3))

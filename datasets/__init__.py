@@ -1,3 +1,4 @@
+"""Dataset package."""
 from .base import Dataset
 from .builder import build_dataset
 from .file_src_dataset import FileSrcDataset
@@ -9,6 +10,6 @@ from .inat_2021 import INat2021
 from .lcc_dataset import LCC2017Dataset, LCC2020Dataset
 from .oppd import OPPDFull
 from .test_dataset import TestDataset
+from .tfc import TFC
 from .transforms import *
 from .utils import *
-from .uwfc import UWFC

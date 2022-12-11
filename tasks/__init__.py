@@ -1,3 +1,4 @@
+"""Tasks."""
 from .builder import create_task
 from .classification import ImageClassification
 from .contrastive_learning import ContrastiveLearning

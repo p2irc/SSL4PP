@@ -1,3 +1,4 @@
+"""The Open Plant Phenotyping Database (OPPD)."""
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
@@ -42,6 +43,7 @@ class OPPDFull(FileSrcDataset):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
+        """Init method."""
         super().__init__(root, transform, seed)
 
         src_path = self.root.joinpath(f"{split}_{subset}.json")
@@ -58,21 +60,23 @@ class OPPDFull(FileSrcDataset):
 
     @property
     def num_classes(self):
+        """The number of classes in the dataset."""
         return len(self.classes)
 
     @property
     def samples(self) -> List[Tuple[str, Dict[str, ndarray]]]:
+        """The samples of the dataset."""
         return self._samples
 
     def __len__(self):
+        """The number of samples in the dataset."""
         return len(self.samples)
 
     @staticmethod
     def make_dataset(
         root: Path, data_src: List[Dict[Any, Any]]
     ) -> List[Tuple[str, Dict[str, ndarray]]]:
-        """Create a list of samples of the dataset containing path-target
-        pairs.
+        """Create a list of samples containing path-target pairs.
 
         Args:
             root: Path
@@ -222,6 +226,7 @@ class OPPDFull(FileSrcDataset):
         return crop, (x, y, w, h)
 
     def __getitem__(self, index: int) -> Tuple[ndarray, Dict]:
+        """Get an item from the dataset at the given index."""
         file_path, target = self.samples[index]
         GWHD2021._check_target(target)
 

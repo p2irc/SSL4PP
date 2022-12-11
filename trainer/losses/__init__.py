@@ -1,3 +1,4 @@
+"""Losses."""
 import inspect
 
 from torch import nn

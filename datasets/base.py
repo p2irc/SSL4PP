@@ -1,3 +1,4 @@
+"""The base class for all datasets in the framework."""
 import abc
 from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple
@@ -11,7 +12,11 @@ class Dataset(TorchDataset):
 
     Args:
         root: str
+            The root directory of the dataset.
         transform: Optional[Callable]:
+            The transformation to apply to the data.
+        seed: Optional[int] = None
+            The seed to use for the random number generator.
 
     """
 
@@ -23,7 +28,7 @@ class Dataset(TorchDataset):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
-
+        """Initialize the dataset."""
         root = Path(root).resolve()
         assert root.is_dir(), "Path to dataset root folder is invalid"
         self.root = root

@@ -1,3 +1,4 @@
+"""Average Domain Accuracy (ADA) metric for wheat head detection task.""" ""
 from typing import Any, Dict, List, Optional
 
 import numpy as np
@@ -10,8 +11,27 @@ from torchvision.ops import box_convert
 
 
 class AverageDomainAccuracy(Metric):
-    """Computes the average domain accuracy for given groundtruth and detection
-    boxes on the wheat head detection task."""
+    """Compute the average domain accuracy for wheat head detection task.
+
+    Args:
+        box_format: tr, optional
+            The format of the boxes. Defaults to "xyxy".
+        compute_on_step: Optional[bool]
+            ``forward `` only calls ``update()`` and return None if this is set
+            to False.
+        dist_sync_on_step: Optional[bool]
+            Synchronize metric state across processes at each ``forward()``
+            before returning the value at the step.
+
+    Attributes:
+        detection_boxes:
+            List of tensors containing the detection boxes.
+        groundtruth_boxes:
+            List of tensors containing the ground truth boxes.
+        groundtruth_domains:
+            List of tensors containing the ground truth domains.
+
+    """
 
     detection_boxes: List[Tensor]
     groundtruth_boxes: List[Tensor]
@@ -23,6 +43,7 @@ class AverageDomainAccuracy(Metric):
         compute_on_step: Optional[bool] = None,
         **kwargs: Dict[str, Any],
     ) -> None:
+        """Init method."""
         super().__init__(compute_on_step=compute_on_step, **kwargs)
 
         allowed_box_formats = ("xyxy", "xywh", "cxcywh")
@@ -39,6 +60,15 @@ class AverageDomainAccuracy(Metric):
     def update(
         self, preds: List[Dict[str, Tensor]], target: List[Dict[str, Tensor]]
     ) -> None:
+        """Update the metric states.
+
+        Args:
+            preds: (List[Dict[str, Tensor]])
+                List of dictionaries containing the predictions.
+            target: (List[Dict[str, Tensor]])
+                List of dictionaries containing the ground truth.
+
+        """
         _input_validator(preds, target)
 
         for item in preds:
@@ -54,10 +84,12 @@ class AverageDomainAccuracy(Metric):
 
     @staticmethod
     def _accuracy(dts: Tensor, gts: Tensor, iou_thr: int = 0.5) -> float:
-        """Compute accuracy between two tensors. Accuracy is defined as the
-        ratio of the number of true positives to the number of true positives
-        plus the number of false positives plus the number of false negative.
-        The expected format is (x_min, y_min, x_max, y_max)
+        """Compute accuracy between two tensors.
+
+        Accuracy is defined as the ratio of the number of true positives to the
+        number of true positives plus the number of false positives plus the
+        number of false negative. The expected format is (x_min, y_min, x_max,
+        y_max)
 
         Args:
             dts (Tensor): Detection boxes.
@@ -65,7 +97,8 @@ class AverageDomainAccuracy(Metric):
             iou_thr (float, optional): IoU threshold. Defaults to 0.5.
 
         Returns:
-            float: Accuracy score.
+            acc: float
+                Accuracy score.
 
         """
         if len(dts) > 0 and len(gts) > 0:
@@ -86,16 +119,20 @@ class AverageDomainAccuracy(Metric):
     @staticmethod
     def _get_matches(
         gts: ArrayLike, dts: ArrayLike, overlapThresh: Optional[float] = 0.5
-    ):
+    ) -> List:
         """Compute matches between groundtruth and detections.
 
         Args:
-            gts (ArrayLike): Groundtruth boxes.
-            dts (ArrayLike): Detection boxes.
-            overlapThresh (Optional[float], optional): Overlap threshold. Defaults to 0.5.
+            gts: ArrayLike
+                Groundtruth boxes.
+            dts: ArrayLike
+                Detection boxes.
+            overlapThresh: float, optional
+                Overlap threshold. Defaults to 0.5.
 
         Returns:
-            List[int]: List of matches.
+            pick: List
+                List of matches.
 
         """
         gts = np.array([np.array(bbox) for bbox in gts])
@@ -155,6 +192,7 @@ class AverageDomainAccuracy(Metric):
         return pick
 
     def compute(self):
+        """Compute the average domain accuracy."""
         self._move_list_states_to_cpu()
 
         df = pd.DataFrame(columns=["domain", "acc"])

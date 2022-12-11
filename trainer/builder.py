@@ -1,3 +1,4 @@
+"""Factory methods for building the optimizer, scheduler, and loss function."""
 from copy import deepcopy
 from typing import Any, Iterable, Optional
 
@@ -14,7 +15,7 @@ def build_optimizer(
     init_lr: float,
     use_lars: Optional[bool] = False,
 ) -> optim.Optimizer:
-    """Configures the optimizer as specified in the cfg.
+    """Configure the optimizer as specified in the cfg.
 
     Args:
         cfg (DictConfig): a hydra config object containing all the information
@@ -49,7 +50,7 @@ def build_scheduler(
     with_lars: bool,
     **kwargs: Any
 ) -> optim.lr_scheduler:
-    """Constructs a learning rate scheduler object based on the given cfg.
+    """Construct a learning rate scheduler object based on the given cfg.
 
     Args:
         cfg (DictConfig):a hydra config object.
@@ -77,7 +78,7 @@ def build_scheduler(
 
 
 def build_loss(cfg: DictConfig):
-    """Constructs the loss function specified in cfg.
+    """Construct the loss function specified in cfg.
 
     Args:
         cfg (DictConfig): a hydra config object

@@ -1,3 +1,4 @@
+"""Registry for building objects from config files."""
 import inspect
 from functools import partial
 from typing import Callable, Dict, Optional, Union
@@ -6,11 +7,14 @@ from omegaconf.dictconfig import DictConfig
 
 
 class Registry(object):
-    """This class is used to create registries, which are used to register
+    """Factory for creating registries.
+
+    This class is used to create registries, which are used to register
     classes. The registries are used to build objects from a config file.
 
     Args:
-        name (str): Name of the registry.
+        name (str):
+            Name of the registry.
 
     Example:
         >>> BACKBONES = Registry("backbone")
@@ -23,27 +27,30 @@ class Registry(object):
     """
 
     def __init__(self, name: str) -> None:
+        """Initialize the registry."""
         self._name = name
         self._class_dict = dict()
 
     @property
     def name(self) -> None:
-        """Returns the name of the registry."""
+        """Return the name of the registry."""
         return self._name
 
     @property
     def class_dict(self) -> None:
-        """Returns the class dictionary."""
+        """Return the class dictionary."""
         return self._class_dict
 
     def get(self, class_name: str) -> Callable:
-        """Gets the class from the registry.
+        """Get the class from the registry.
 
         Args:
-            class_name (str): Name of the class to get.
+            class_name (str):
+                Name of the class to get.
 
         Returns:
-            Callable: The class.
+            Callable:
+                The class.
 
         """
         if class_name not in self._class_dict:
@@ -54,9 +61,10 @@ class Registry(object):
         """Registers a class.
 
         Args:
-            cls (object): Class to be registered.
-            force (bool, optional): If True, overwrites the class if it already exists.
-                Defaults to False.
+            cls: object
+                Class to be registered.
+            force: bool, default=False
+                If True, overwrites the class if it already exists.
 
         """
         # check if cls is a class
@@ -77,12 +85,15 @@ class Registry(object):
         """Registers a class.
 
         Args:
-            cls (Callable, optional): Class to be registered.
-            force (bool, optional): If True, overwrites the class if it already exists.
-                Defaults to False.
+            cls (Callable, optional):
+                Class to be registered.
+            force (bool, optional):
+                If True, overwrites the class if it already exists. Defaults to
+                False.
 
         Returns:
-            Callable: The registered class.
+            Callable:
+                The registered class.
 
         """
         if cls is None:
@@ -94,13 +105,16 @@ class Registry(object):
 def build_from_cfg(
     cfg: Union[Dict, DictConfig], registry: object, default_args: Optional[Dict] = None
 ):
-    """Build a module from config dict. Modified from: https://github.com/WXinl
-    ong/DenseCL/blob/main/openselfsup/utils/registry.py.
+    """A factory method to build a module from config dict.
 
     Args:
-        cfg (dict): Config dict. It should at least contain the key "type".
-        registry (:obj:`Registry`): The registry to search the type from.
-        default_args (dict, optional): Default initialization arguments.
+        cfg: dict or DictConfig
+            Config dict. It should at least contain the key "type".
+        registry: :obj:`Registry`
+            The registry to search the type from.
+        default_args: dict, optional
+            Default initialization arguments.
+
     Returns:
         obj: The constructed object.
 

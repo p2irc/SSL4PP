@@ -1,3 +1,4 @@
+"""Distributed training utilities."""
 import os
 import subprocess
 
@@ -26,16 +27,16 @@ def init_distributed_mode(launcher: str, backend: str) -> None:
 
 
 def launch_pytorch_dist(backend: str) -> None:
-    """Initializes a distributed process group when using the pytorch
-    distributed launch utility (torch.distributed.run).
+    """Initialize a distributed process group with PyTorch.
 
     NOTE: This method relies on torch.distributed.run to set
     MASTER_ADDR, MASTER_PORT, RANK, WORLD_SIZE and LOCAL_RANK
     as environment variables
 
     Args:
-        backend (str): {'nccl', 'gloo', 'mpi'} Specifies which backend to use
-            when initializing a process group.
+        backend: str
+            Specifies which backend to use when initializing a process group.
+            Options are: 'nccl', 'gloo' and 'mpi'
 
     """
     local_rank = int(os.environ["LOCAL_RANK"])
@@ -46,12 +47,12 @@ def launch_pytorch_dist(backend: str) -> None:
 
 
 def launch_slurm_dist(backend: str) -> None:
-    """Initializes a distributed process group when process are spawned in a
-    SLURM cluster (using the srun and sbatch commands).
+    """Initialize a distributed process group when using SLURM.
 
     Args:
-        backend (str): {'nccl', 'gloo', 'mpi'} Specifies which backend to use
-            when initializing a process group.
+        backend: str
+            Specifies which backend to use when initializing a process group.
+            Options are: 'nccl', 'gloo' and 'mpi'
 
     """
     # set the MASTER_ADDR, MASTER_PORT, RANK and WORLD_SIZE
@@ -77,7 +78,7 @@ def launch_slurm_dist(backend: str) -> None:
 # the following functions were adapted from:
 # https://github.com/pytorch/vision/blob/main/references/classification/utils.py
 def disable_non_master_print():
-    """Disables printing if not master process.
+    """Disable printing if not master process.
 
     However, printing can be forced by adding a boolean flag, 'force',
     to the keyword arguments to the print function call.
@@ -96,14 +97,12 @@ def disable_non_master_print():
 
 
 def is_dist_avail_and_initialized() -> bool:
-    """Returns True if the PyTorch distribued package is available and a
-    distributed process group has been initialized."""
+    """Check if the distributed package is available and initialized."""
     return dist.is_available() and dist.is_initialized()
 
 
 def get_world_size() -> int:
-    """Returns the total number of processes that have been initialized in a
-    distributed process group.
+    """Get the total number of processes a distributed process group.
 
     It returns 1 if the PyTorch distribued package is unavailable or the
     default process group has not been initialized.
@@ -115,8 +114,7 @@ def get_world_size() -> int:
 
 
 def get_rank() -> int:
-    """Returns the global rank of the current process in the default distribued
-    process group.
+    """Return the global rank of the current process.
 
     Returns 0 if the PyTorch distribued package is unavailable or the
     default process group has not been initialized.
@@ -128,8 +126,7 @@ def get_rank() -> int:
 
 
 def is_main_process() -> bool:
-    """Checks if the current process in the default process group is the Master
-    proces.
+    """Check if the current process is the Master proces.
 
     The master process typically has a rank of 0.
 
@@ -139,14 +136,21 @@ def is_main_process() -> bool:
 
 # the following are from
 # https://github.com/pytorch/vision/blob/main/references/detection/utils.py
-def reduce_dict(input_dict, average=True):
-    """
-    Args:
-        input_dict (dict): all the values will be reduced
-        average (bool): whether to do average or sum
+def reduce_dict(input_dict, average=True) -> dict:
+    """Reduce the values in the dictionary from all processes.
+
     Reduce the values in the dictionary from all processes so that all processes
-    have the averaged results. Returns a dict with the same fields as
-    input_dict, after reduction.
+    have the averaged results.
+
+    Args:
+        input_dict (dict):
+            All the values will be reduced.
+        average (bool):
+            Whether to do average or sum.
+
+    Returns:
+        dict: a dict with the same fields as input_dict, after reduction.
+
     """
     world_size = get_world_size()
     if world_size < 2:
@@ -167,12 +171,15 @@ def reduce_dict(input_dict, average=True):
 
 
 def all_gather(data):
-    """
-    Run all_gather on arbitrary picklable data (not necessarily tensors)
+    """Run all_gather on arbitrary picklable data (not necessarily tensors).
+
     Args:
         data: any picklable object
+
     Returns:
-        list[data]: list of data gathered from each rank
+        data_list: List
+            list of data gathered from each rank
+
     """
     world_size = get_world_size()
     if world_size == 1:

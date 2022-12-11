@@ -1,17 +1,22 @@
+"""Object for a dataset that is stored in a file.
+
+Supports JSON and CSV files.
+
+"""
 import json
 from abc import abstractmethod
 from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple
 
 import pandas as pd
-import torch
 
 from datasets.base import Dataset
 
 
 class FileSrcDataset(Dataset):
-    """Object for a dataset that is stored in a file. Supports JSON and CSV
-    files.
+    """Object for a dataset that is stored in a file.
+
+    Supports JSON and CSV files.
 
     Args:
         root: str
@@ -29,6 +34,7 @@ class FileSrcDataset(Dataset):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
+        """Initialize the dataset."""
         super().__init__(root, transform, seed)
 
     @property
@@ -87,7 +93,7 @@ class FileSrcDataset(Dataset):
     @staticmethod
     @abstractmethod
     def make_dataset(*args, **kwargs) -> List[Tuple[Any, Any]]:
-        """Creates a list of path/target pairs."""
+        """Create a list of path/target pairs."""
 
     def __getitem__(self, index: int) -> Any:
         """Get sample at given index."""

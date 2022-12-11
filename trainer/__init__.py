@@ -1,3 +1,4 @@
+"""Trainer package."""
 import inspect
 import warnings
 from collections import Counter
@@ -22,16 +23,29 @@ for cls in schedulers:
     if "LR" in cls[0] or "CosineAnnealing" in cls[0] and cls[0] != "LambdaLR":
         LR_SCHEDULERS.register_class(cls[1])
 
-# @LR_SCHEDULERS.register_class
-class ConstantLR(LambdaLR):
-    def __init__(self, optimizer, verbose=False) -> None:
-        lr_lambda = lambda epoch: (epoch + 1) // (epoch + 1)
-        last_epoch = -1
-        super().__init__(optimizer, lr_lambda, last_epoch, verbose)
-
 
 @LR_SCHEDULERS.register_class
 class MultiStepLRWithLinearWarmup(_LRScheduler):
+    """MultiStepLR with linear warmup.
+
+    Args:
+        optimizer (Optimizer):
+            Wrapped optimizer.
+        milestones (list):
+            List of epoch indices. Must be increasing.
+        warmup_steps (int):
+            Number of warmup steps.
+        warmup_ratio (float):
+            Initial learning rate ratio.
+        gamma (float):
+            Multiplicative factor of learning rate decay. Default: 0.1.
+        last_epoch (int):
+            The index of last epoch. Default: -1.
+        verbose (bool):
+            If ``True``, prints a message to stdout for
+
+    """
+
     def __init__(
         self,
         optimizer,
@@ -42,7 +56,7 @@ class MultiStepLRWithLinearWarmup(_LRScheduler):
         last_epoch: Optional[int] = -1,
         verbose: Optional[bool] = False,
     ) -> None:
-
+        """Initialize."""
         self.milestones = Counter(milestones)
         self.warmup_steps = warmup_steps
         self.warmup_ratio = warmup_ratio
@@ -50,6 +64,7 @@ class MultiStepLRWithLinearWarmup(_LRScheduler):
         super().__init__(optimizer, last_epoch, verbose)
 
     def get_lr(self) -> float:
+        """Get learning rate."""
         if not self._get_lr_called_within_step:
             warnings.warn(
                 "To get the last learning rate computed by the scheduler, "

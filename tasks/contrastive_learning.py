@@ -1,3 +1,4 @@
+"""The contrastive learning task."""
 from copy import deepcopy
 from typing import NamedTuple, Tuple, Union
 
@@ -12,14 +13,16 @@ from .base import Task
 
 @TASKS.register_class
 class ContrastiveLearning(Task):
-    """Task for contrastive learning.
+    """Contrastive learning task.
 
     Args:
-        cfg (DictConfig): Hydra config object.
+        cfg (DictConfig):
+            A Hydra config object.
 
     """
 
     def __init__(self, cfg: DictConfig) -> None:
+        """Initialize the task."""
         if (
             cfg.get("distributed") is None
             or not dist_utils.is_dist_avail_and_initialized()
@@ -37,12 +40,16 @@ class ContrastiveLearning(Task):
         r"""Load a pretrained model from a checkpoint.
 
         Args:
-            model (torch.nn.Module): model to load pretrained weights on to.
-            url (str): URL of pretrained checkpoint
+            model (torch.nn.Module):
+                model to load pretrained weights on to.
+            url (str):
+                URL of pretrained checkpoint
 
         Returns:
-            model: model with pretrained weights loaded
-            msg: a NamedTuple containing missing keys and unexpected keys
+            model:
+                model with pretrained weights loaded.
+            msg:
+                a NamedTuple containing missing keys and unexpected keys.
 
         """
         print("Loading pretrained checkpoint: '{}'".format(url))
@@ -88,12 +95,14 @@ class ContrastiveLearning(Task):
         return model
 
     def prepare_input(self, **kwargs) -> Tuple:
+        """Prepare input for the task."""
         images = kwargs["images"]
         images[0] = images[0].cuda(self.device_id, non_blocking=True)
         images[1] = images[1].cuda(self.device_id, non_blocking=True)
         return images[0], images[1]
 
     def get_loss(self, **kwargs) -> Union[float, torch.Tensor]:
+        """Get the loss for the task."""
         outputs = kwargs["outputs"]
         loss = self.criterion(*outputs)
         if isinstance(loss, dict):
@@ -101,7 +110,9 @@ class ContrastiveLearning(Task):
         return loss
 
     def get_train_metrics(self, *args, **kwargs) -> None:
+        """Get the metrics for the task."""
         return None
 
     def evaluate(self, *args, **kwargs) -> None:
+        """Evaluate the task."""
         return None

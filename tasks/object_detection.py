@@ -1,3 +1,4 @@
+"""Object detection task."""
 import time
 from typing import Any, Dict, Optional, Tuple, Union
 
@@ -17,18 +18,16 @@ from .base import Task
 
 @TASKS.register_class
 class ObjectDetection(Task):
-    """Task for object detection.
+    """Object detection task.
 
     Args:
-        cfg (DictConfig): Hydra config object.
-
-    Attributes:
-        best_eval_score (float): Best evaluation score.
-        is_best_ckpt (bool): Whether the current checkpoint is the best.
+        cfg (DictConfig):
+            A Hydra config object.
 
     """
 
     def __init__(self, cfg: DictConfig, **kwargs: Any) -> None:
+        """Initialize the task."""
         if (
             not isinstance(cfg.task.model.get("is_pretrained"), bool)
             or cfg.checkpoint.get("pretrained") is not None
@@ -55,6 +54,7 @@ class ObjectDetection(Task):
         self.test_metrics = MetricCollection(metrics)
 
     def prepare_input(self, **kwargs) -> Tuple:
+        """Prepare input for the model."""
         images = kwargs["images"]
         targets = kwargs["targets"]
         if torch.cuda.is_available():
@@ -63,24 +63,29 @@ class ObjectDetection(Task):
         return (images, targets)
 
     def _prepare_images(self, images):
+        """Prepare images for the model."""
         return list(img.cuda(self.device_id, non_blocking=True) for img in images)
 
     def _prepare_targets(self, targets):
+        """Prepare targets for the model."""
         return [
             {k: v.cuda(self.device_id, non_blocking=True) for k, v in t.items()}
             for t in targets
         ]
 
     def get_loss(self, **kwargs) -> Union[float, torch.Tensor]:
+        """Get the loss for the model."""
         loss_dict = kwargs["outputs"]
         loss = sum(loss for loss in loss_dict.values())
         return loss
 
     def get_train_metrics(self, *args, **kwargs) -> None:
+        """Get the metrics for the model."""
         return None
 
     @torch.no_grad()
     def evaluate(self, wandb_logger: Optional[Run] = None, **kwargs):
+        """Evaluate the model."""
         print("Evaluating model...")
         eval_time = time.time()
         self.model.eval()
@@ -136,10 +141,12 @@ class ObjectDetection(Task):
         """Process the results from the metrics.
 
         Args:
-            results (Dict[str, Union[torch.Tensor, float]]): Results from the metrics.
+            results (Dict[str, Union[torch.Tensor, float]]):
+                Results from the metrics.
 
         Returns:
-            Dict[str, Union[torch.Tensor, float]]: Processed results.
+            Dict[str, Union[torch.Tensor, float]]:
+                Processed results.
 
         """
         eval_results = dict()
@@ -154,18 +161,20 @@ class ObjectDetection(Task):
 
 
 def collate_fn(batch):
-    """Since each image may have a different number of objects, we need a
+    """Custom collate function.
+
+    Since each image may have a different number of objects, we need a
     collate function (to be passed to the DataLoader).
 
     Args:
-        batch: an iterable of N sets from __getitem__()
+        batch:
+            an iterable of N sets from __getitem__()
 
     Returns:
         a tensor of images, lists of varying-size tensors of bounding boxes,
         labels, and difficulties
 
     """
-
     images = list()
     targets = list()
 

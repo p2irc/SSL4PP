@@ -1,3 +1,4 @@
+"""The 2021 Global Wheat Head Detection dataset."""
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
@@ -42,6 +43,7 @@ class GWHD2021(FileSrcDataset):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
+        """Initialize the dataset."""
         super().__init__(root, transform, seed)
 
         src_path = self.root.joinpath(f"competition_{split}.csv")
@@ -61,17 +63,29 @@ class GWHD2021(FileSrcDataset):
 
     @property
     def num_classes(self) -> int:
+        """The number of classes in the dataset."""
         return len(self.classes)
 
     @property
     def samples(self) -> List[Tuple[str, Dict[str, ndarray]]]:
+        """The samples in the dataset."""
         return self._samples
 
     def __len__(self) -> int:
+        """The number of samples in the dataset."""
         return len(self.samples)
 
     @staticmethod
     def load_data_from_src(root: Path, split: str) -> Any:
+        """Load the data from the source.
+
+        Args:
+            root: Path
+                The root directory of the dataset.
+            split: str
+                The split of the dataset to use. One of "train", "val", "test".
+
+        """
         label_src = root.joinpath(f"competition_{split}.csv")
         assert label_src.exists()
 
@@ -230,7 +244,7 @@ class GWHD2021(FileSrcDataset):
 
     @staticmethod
     def decodeString(box_str: str):
-        """Small method to decode the BoxesString."""
+        """Decode the box string into a numpy array."""
         if box_str == "no_box":
             return np.zeros((0, 4))
         else:

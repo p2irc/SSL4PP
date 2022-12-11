@@ -1,3 +1,4 @@
+"""Faster R-CNN model."""
 from typing import Any, Optional
 
 import torch.nn as nn
@@ -18,6 +19,20 @@ class FasterRCNN(torchvision.models.detection.FasterRCNN):
 
     Adapted from torchvision.models.detection.FasterRCNN.
 
+    Args:
+        backbone: Union[Dict, DictConfig]
+            A hydra config object containing all the information needed to build
+            the backbone.
+        num_classes: int
+            Number of classes.
+        is_pretrained: bool, default=False
+            Whether to load pretrained weights.
+        trainable_backbone_layers: int, default=None
+            Number of trainable backbone layers. If None, all layers are
+            trainable.
+        kwargs: Any
+            Additional arguments to pass to the FasterRCNN constructor.
+
     """
 
     def __init__(
@@ -28,6 +43,7 @@ class FasterRCNN(torchvision.models.detection.FasterRCNN):
         trainable_backbone_layers: Optional[int] = None,
         **kwargs: Any,
     ):
+        """Init method."""
         assert backbone.type == "ResNet", "Only the ResNet backbone is supported."
         assert backbone.depth in [18, 34, 50, 101, 152]
 

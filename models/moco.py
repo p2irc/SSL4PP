@@ -1,3 +1,8 @@
+"""Momentum Contrast.
+
+https://arxiv.org/abs/2003.04297v1.
+
+"""
 from typing import Dict, Optional, Union
 
 import torch
@@ -10,18 +15,22 @@ from models.registry import MODELS
 
 @MODELS.register_class
 class MoCo(nn.Module):
-    """Momentum Contrast. https://arxiv.org/abs/2003.04297v1.
+    """Momentum Contrast.
 
     The code is adapted from:
     "https://github.com/facebookresearch/moco/blob/master/moco/builder.py".
 
     Args:
-        backbone (Union[Dict, DictConfig]): a hydra config object containing all
-            the information needed to build the backbone.
-        head (Union[Dict, DictConfig]): a hydra config object containing all
-            the information needed to build the projection head.
-        queue_len (Optional[int]): number of embeddings in the queue. Defaults to 65536.
-        momentum (Optional[float]): momentum value. Default: 0.999.
+        backbone: Union[Dict, DictConfig]
+            a hydra config object containing all the information needed to build
+            the backbone.
+        head: Union[Dict, DictConfig]
+            a hydra config object containing all the information needed to build
+            the projection head.
+        queue_len: int, default=65536
+            number of embeddings in the queue.
+        momentum: float, default=0.999
+            momentum value.
 
     """
 
@@ -32,6 +41,7 @@ class MoCo(nn.Module):
         queue_len: Optional[int] = 65536,
         momentum: Optional[float] = 0.999,
     ) -> None:
+        """Init method."""
         super(MoCo, self).__init__()
 
         self.encoder_q = self._build_encoder(backbone, head)
@@ -58,7 +68,7 @@ class MoCo(nn.Module):
 
     @staticmethod
     def _build_encoder(backbone_cfg: DictConfig, projector_cfg: DictConfig):
-        """Builds the encoder."""
+        """Build the encoder."""
         backbone = builder.build_backbone(backbone_cfg)
         backbone.fc = nn.Identity()
         projector = builder.build_head(projector_cfg)

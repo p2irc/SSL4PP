@@ -1,3 +1,4 @@
+"""ResNet model."""
 from collections import OrderedDict
 from typing import Any
 
@@ -10,11 +11,13 @@ from models.registry import BACKBONES, MODELS
 @MODELS.register_class
 @BACKBONES.register_class
 class ResNet(resnet.ResNet):
-    """ResNet backbone.
+    """Residual network.
 
     Args:
-        depth (int): Depth of the ResNet backbone.
-        **kwargs: Other arguments.
+        depth (int):
+            Depth of the ResNet backbone.
+        **kwargs:
+            Other arguments.
 
     """
 
@@ -27,6 +30,7 @@ class ResNet(resnet.ResNet):
     }
 
     def __init__(self, depth: int, **kwargs: Any) -> None:
+        """Init method."""
         if depth not in self.arch_params:
             raise KeyError("invalid depth {} for resnet".format(depth))
         block = self.arch_params[depth][0]
@@ -51,6 +55,7 @@ class ResNet(resnet.ResNet):
         """Returns a forward hook for the given layer name."""
 
         def hook(module, input, output):
+            """Forward hook."""
             self._activations[layer_name] = output.detach()
 
         return hook

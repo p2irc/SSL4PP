@@ -1,10 +1,11 @@
+"""Factory for building tasks."""
 from omegaconf import DictConfig
 
 from tasks.registry import TASKS
 
 
 def create_task(cfg: DictConfig):
-    """Creates the class for the task specified in cfg.
+    """Create the class for the task specified in cfg.
 
     Args:
         cfg (DictConfig): The (hydra) config to be used to build the task class.

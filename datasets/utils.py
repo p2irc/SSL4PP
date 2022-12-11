@@ -1,5 +1,7 @@
+"""Utility functions for the datasets module."""
 import random
 import warnings
+from collections import OrderedDict
 from typing import List, Optional, Tuple, Union
 
 import cv2
@@ -38,7 +40,6 @@ def get_random_sample(
             A list of tuples containing the path to the image and the target value.
 
     """
-
     assert sampling_method in ["uniform", "stratified", None]
 
     subset = path_target_pair
@@ -129,7 +130,8 @@ def plot_sample(
 
     imgs = []
     for _ in range(num_samples):
-        img, target = dataset[random.randint(0, len(dataset) - 1)]
+        idx = random.randint(0, len(dataset) - 1)
+        img, target = dataset[idx]
 
         if isinstance(img, Tensor):
             img = img.T.numpy()
@@ -148,6 +150,22 @@ def plot_sample(
                     (255, 0, 0),
                     3,
                 )
+
+        # overlay density map for counting task
+        if isinstance(target, OrderedDict) and "count" in target.keys():
+            keypts = dataset.samples[idx][1]
+            map_shape = img.shape[:2]
+
+            if with_transforms or img.shape[0] <= 3:
+                map_shape = img.shape[1:]
+
+            density_map = generate_density_map(keypts, map_shape, 23)
+            density_map = cv2.merge([density_map, density_map, density_map])
+            density_map = cv2.normalize(
+                density_map, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U
+            )
+            img = cv2.addWeighted(img, 0.5, density_map, 0.5, 0)
+
         imgs.append(img)
 
     for ax, im in zip(grid, imgs):

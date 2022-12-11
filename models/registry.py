@@ -1,3 +1,4 @@
+"""Registry for models, backbones, heads, etc."""
 import sys
 
 sys.path.append("..")

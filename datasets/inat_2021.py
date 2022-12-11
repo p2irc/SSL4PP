@@ -1,3 +1,4 @@
+"""The iNaturalist 2021 dataset."""
 import warnings
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
@@ -45,6 +46,7 @@ class INat2021(FileSrcDataset):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
+        """Initialize the dataset."""
         super().__init__(root, transform, seed)
 
         self._validate_input(sampling_method, sample_size, split, supercategory)
@@ -63,16 +65,20 @@ class INat2021(FileSrcDataset):
 
     @property
     def num_classes(self):
+        """The number of classes in the dataset."""
         return len(self.classes)
 
     @property
     def samples(self) -> Tuple[List[str], Any]:
+        """The samples in the dataset."""
         return self._samples
 
     def __len__(self):
+        """The number of samples in the dataset."""
         return len(self.samples)
 
     def __getitem__(self, index: int) -> Tuple[ndarray, int]:
+        """Get a sample from the dataset."""
         file_path, target = self.samples[index]
 
         # pylint: disable=no-member
@@ -101,6 +107,7 @@ class INat2021(FileSrcDataset):
         split: str,
         supercategory: str,
     ) -> None:
+        """Validate the input to the dataset."""
         ImageDatasetFolder._validate_input(sampling_method, sample_size)
         assert split in [
             "train",
@@ -132,7 +139,7 @@ class INat2021(FileSrcDataset):
     def find_classes(
         metadata: Dict, supercategory: str
     ) -> Tuple[List[str], Dict[str, int]]:
-        """Finds the class labels in the data.
+        """Find the class labels in the data.
 
         Args:
             metadata: Dict
@@ -165,7 +172,7 @@ class INat2021(FileSrcDataset):
     def make_dataset(
         root: Path, metadata: Dict, class_to_idx: Dict[str, int], supercategory: str
     ) -> List[Tuple[str, int]]:
-        """Generates a list of samples of the form (image path, class index).
+        """Generate a list of samples of the form (image path, class index).
 
         Args:
             root: Path

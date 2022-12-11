@@ -1,3 +1,4 @@
+"""Transforms module."""
 import inspect
 
 import albumentations as A

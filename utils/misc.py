@@ -1,3 +1,4 @@
+"""Miscellaneous utility functions."""
 import os
 import random
 import warnings
@@ -7,13 +8,14 @@ import numpy as np
 import torch
 
 
-def set_random_seed(seed: int, determinstic: Optional[bool] = False) -> None:
-    """Globally sets a random seed for python, numpy and PyTorch random
-    modules.
+def set_random_seed(seed: int, deterministic: Optional[bool] = False) -> None:
+    """Set a random seed for python, numpy and PyTorch globally.
 
     Args:
-        seed (int): value of random seed to set
-        deterministic (bool): turn on CuDNN deterministic settings. Default: False
+        seed: int
+            Value of random seed to set.
+        deterministic: bool, default=False
+            Turn on CuDNN deterministic settings. This will slow down training.
 
     """
     if seed is not None and isinstance(seed, int):
@@ -24,7 +26,7 @@ def set_random_seed(seed: int, determinstic: Optional[bool] = False) -> None:
             torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
         os.environ["PYTHONHASHSEED"] = str(seed)
-        if determinstic:
+        if deterministic:
             torch.backends.cudnn.deterministic = True
             torch.backends.cudnn.benchmark = (
                 False  # stops algorithm tuning; slows training
