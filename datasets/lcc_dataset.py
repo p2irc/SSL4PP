@@ -1,3 +1,4 @@
+"""Dataset objects for the 2017 and 2020 Leaf Counting Challenge dataset."""
 from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple
 
@@ -43,7 +44,7 @@ class LCC2017Dataset(GWSUsask):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
-
+        """Init method."""
         root = Path(root).resolve()
         assert root.is_dir(), "Path to dataset root folder is invalid"
         self.root = root
@@ -59,8 +60,26 @@ class LCC2017Dataset(GWSUsask):
         self.idx_to_class = {v: k for k, v, in self.class_to_idx.items()}
 
     @staticmethod
-    def get_data_src(root, split, subset, **kwargs):
-        folder = kwargs["folder"]
+    def get_data_src(
+        root: Path, split: str, subset: int, folder: str = "all"
+    ) -> pd.DataFrame:
+        """Get the data source.
+
+        Args:
+            root: Path
+                The root directory of the dataset.
+            split: str
+                The split of the dataset to use. One of "train", or "test".
+            subset: int
+                The subset of the dataset to use. One of 0, 1, 2, 3, 4.
+            folder: Optional[str]
+                The folder of the dataset to use. One of "all", "A1", "A2", "A3" or "A4".
+
+        Returns:
+            data_src: pd.DataFrame
+                The data source.
+
+        """
         assert folder in ["all", "A1", "A2", "A3", "A4"]
         if folder == "all":
             label_src = root.joinpath(f"{split}_{subset}.csv")
@@ -70,7 +89,20 @@ class LCC2017Dataset(GWSUsask):
         return data_src
 
     @staticmethod
-    def make_dataset(root: Path, data_src: List):
+    def make_dataset(root: Path, data_src: pd.DataFrame) -> List[Tuple[str, Any]]:
+        """Make the dataset.
+
+        Args:
+            root: Path
+                The root directory of the dataset.
+            data_src: pd.DataFrame
+                The data source.
+
+        Returns:
+            path_target_pair: List[Tuple[str, Any]]
+                The list of (image path, target) pairs.
+
+        """
         file_paths = (
             data_src["rgb_filepath"].apply(lambda x: str(root.joinpath(x))).values
         )
@@ -107,6 +139,7 @@ class LCC2020Dataset(FileSrcDataset):
         transform: Optional[Callable] = None,
         seed: Optional[int] = None,
     ) -> None:
+        """Init method."""
         super().__init__(root, transform, seed)
 
         assert split in ["train", "valid", "val"]
@@ -124,13 +157,16 @@ class LCC2020Dataset(FileSrcDataset):
 
     @property
     def num_classes(self) -> int:
+        """The number of classes in the dataset."""
         return len(self.classes)
 
     @property
     def samples(self) -> Tuple[List[str], Any]:
+        """The list of samples."""
         return self._samples
 
     def __len__(self) -> int:
+        """The number of samples in the dataset."""
         return len(self.samples)
 
     @staticmethod
@@ -170,7 +206,7 @@ class LCC2020Dataset(FileSrcDataset):
         return path_target_pair
 
     @staticmethod
-    def load_data_from_src(root: Path, split: str) -> Any:
+    def load_data_from_src(root: Path, split: str) -> pd.DataFrame:
         """Load the data source.
 
         Args:
@@ -180,7 +216,7 @@ class LCC2020Dataset(FileSrcDataset):
                 The split of the dataset to use. One of "train", "valid", or "val".
 
         Returns:
-            Any
+            A pandas.DataFrame of the data source.
                 The data source.
 
         """
@@ -191,6 +227,7 @@ class LCC2020Dataset(FileSrcDataset):
         return df
 
     def __getitem__(self, index: int) -> Any:
+        """Get the sample at the given index."""
         file_path, keypoints = self.samples[index]
 
         # load image
@@ -220,8 +257,10 @@ class LCC2020Dataset(FileSrcDataset):
 
 def get_keypoints_from_center_image(path_to_img: str) -> np.ndarray:
     """Get the keypoints from the center image."""
-
     img = cv2.imread(path_to_img, cv2.IMREAD_GRAYSCALE)
-    keypoints = np.argwhere(img != 0)
+    keypoints = np.argwhere(img != 0)  # returns Point(x, y), which is (col, row)
 
-    return keypoints
+    if "A4" in path_to_img:
+        return keypoints
+
+    return np.flip(keypoints, axis=1)
