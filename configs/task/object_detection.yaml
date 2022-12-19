@@ -1,0 +1,28 @@
+defaults:
+  - dataset: gwhd_2021
+  - optimizer@trainer.optimizer: sgd
+  - lr_scheduler@trainer.lr_scheduler: multi_step_lr
+
+type: ObjectDetection
+eval_only_at_end: False
+evaluate: False
+model:
+  type: FasterRCNN
+  backbone:
+    type: ResNet
+    depth: 50
+  num_classes: 2 # including background
+  image_mean: [0, 0, 0] # disable GeneralizedRCNNTransform.normalize
+  image_std: [1, 1, 1]
+  is_pretrained: ??? # set at runtime, based on checkpoint cfg
+dataloader:
+    global_batch_size: 8
+    num_workers: 4 # per GPU
+trainer:
+  base_lr: 1e-3
+  num_epochs: 48
+  mixed_precision: true
+  step_freq: batch
+  lr_scheduler:
+    milestones: [14592, 20064]
+    warmup_steps: 500

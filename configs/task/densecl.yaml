@@ -1,0 +1,50 @@
+defaults:
+  - loss@trainer.loss: densecl_loss
+  - optimizer@trainer.optimizer: sgd
+  - lr_scheduler@trainer.lr_scheduler: cosine_lr
+
+type: ContrastiveLearning
+evaluate: False
+val_freq: -1
+model:
+  type: DenseCL
+  queue_len: 65536
+  momentum: 0.999
+  backbone:
+    type: ResNet
+    depth: 50
+    zero_init_residual: True
+  head:
+    type: ProjectionHead
+    mlp_head:
+      type: MLP
+      layers:
+      - in_dim: 2048
+        out_dim: 2048
+        bias: True
+        relu: True
+        batch_norm: False
+      - in_dim: 2048
+        out_dim: 128
+        bias: True
+        relu: False
+        batch_norm: False
+    dense_head:
+      type: ConvProjector
+      layers:
+      - in_dim: 2048
+        out_dim: 2048
+        relu: True
+      - in_dim: 2048
+        out_dim: 128
+        relu: False
+dataloader:
+  global_batch_size: 256
+  num_workers: 4 # per GPU
+trainer:
+  base_lr: 0.03
+  base_lr_batch_size: 256
+  num_epochs: 200
+  use_lars: False
+  step_freq: batch
+  mixed_precision: True

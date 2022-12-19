@@ -1,0 +1,13 @@
+defaults:
+  - transform@train_split.transform: moco_v2
+  - transform@test_split.transform: test_preset
+
+type: INat2021
+root: data/inat-2021
+supercategory: null
+train_split:
+  split: train
+  sample_size: null
+  sampling_method: stratified
+test_split:
+  split: val

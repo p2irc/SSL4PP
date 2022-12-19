@@ -1,0 +1,24 @@
+# @package _global_
+defaults:
+  - override /task: density_counting
+  - override /task/dataset: lcc_2020
+  - override /task/loss@task.trainer.loss: drn_loss
+  - override /task/optimizer@task.trainer.optimizer: adam
+  - override /task/lr_scheduler@task.trainer.lr_scheduler: cosine_lr
+
+experiment_name: ???
+log_freq: 5
+task:
+  eval_only_at_end: False
+  dataloader:
+    global_batch_size: 32
+    num_workers: 4 # per GPU
+    drop_last: False
+  trainer:
+    base_lr: 1e-4
+    num_epochs: 200
+    step_freq: batch
+    lr_scheduler:
+      eta_min: 1e-7
+wandb:
+  project: leaf-counting

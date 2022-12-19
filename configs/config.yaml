@@ -1,0 +1,38 @@
+defaults:
+  - task: image_classification
+  - _self_
+
+experiment_name: ???
+seed: 42
+deterministic: True
+log_freq: 100 # steps
+distributed:
+  backend: nccl
+  launcher: pytorch
+  sync_bn: True
+checkpoint:
+  dir: 'checkpoints'
+  resume: null
+  pretrained: null
+  save_freq: 1 # epoch
+  keep_latest_only: true
+wandb:
+  entity: ???
+  project: ???
+  name: ${experiment_name}
+  resume: auto
+  mode: online
+  tags:
+    - ${task.type}
+    - ${task.dataset.type}
+    - ${task.trainer.optimizer.type}
+    - ${task.trainer.lr_scheduler.type}
+hydra:
+  run:
+    # Output directory for normal runs
+    dir: ./output/${task.type}/${task.dataset.type}/${experiment_name}/${now:%Y-%m-%d_%H-%M-%S}
+  sweep:
+    # Output directory for sweep runs
+    dir: ./multirun/output/${task.type}/${task.dataset.type}/${experiment_name}/${now:%Y-%m-%d_%H-%M-%S}
+    # Output sub directory for sweep runs.
+    subdir: ${hydra.job.num}_${hydra.job.id}

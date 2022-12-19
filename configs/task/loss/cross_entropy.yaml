@@ -1,0 +1,1 @@
+type: CrossEntropyLoss # torch 1.9.0

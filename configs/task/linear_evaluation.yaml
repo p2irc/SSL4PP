@@ -1,0 +1,23 @@
+defaults:
+  - dataset: imagenet
+  - loss@trainer.loss: cross_entropy
+  - optimizer@trainer.optimizer: sgd
+  - lr_scheduler@trainer.lr_scheduler: cosine_lr
+
+type: LinearEvaluation
+evaluate: False
+val_freq: 1
+model:
+  type: ResNet
+  depth: 50
+  num_classes: ???
+dataloader:
+  global_batch_size: 2048
+  num_workers: 4 # per GPU
+trainer:
+  base_lr: 0.1
+  base_lr_batch_size: 256
+  num_epochs: 25
+  use_lars: True
+  step_freq: epoch
+  mixed_precision: true
