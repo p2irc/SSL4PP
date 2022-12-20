@@ -3,6 +3,7 @@ import inspect
 
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
+
 from datasets.registry import TRANSFORMS
 
 from .ssl_transforms import TwoCropsTransform

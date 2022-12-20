@@ -5,12 +5,12 @@ from copy import deepcopy
 from functools import partial
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+import albumentations as A
 import numpy as np
 from omegaconf import DictConfig, ListConfig
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
-import albumentations as A
 import utils.distributed as dist_utils
 from datasets.registry import DATASETS, TRANSFORMS
 from utils.registry import build_from_cfg
