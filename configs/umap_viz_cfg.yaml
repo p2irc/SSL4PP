@@ -1,0 +1,35 @@
+defaults:
+  - task/dataset: imagenet
+  - override task/dataset/transform@task.dataset.test_split.transform: test_preset
+  - _self_
+
+experiment_name: ???
+seed: 42
+log_freq: 100
+deterministic: True
+task:
+  backbone:
+    type: ResNet
+    depth: 50
+  dataloader:
+      global_batch_size: 64
+      num_workers: 4 # per GPU
+  umap_params:
+    n_neighbors: 100
+    min_dist: 0.25
+  dataset:
+    test_split:
+      split: test
+  pretrained_ckpt: ???
+  mixed_precision: true
+wandb:
+  entity: ??? # your wandb entity
+  project: UMAP-viz
+  name: ${experiment_name}
+  resume: auto
+  mode: online
+  tags:
+    - ${task.dataset.type}
+hydra:
+  run:
+    dir: ./output/UMAP_viz/${task.dataset.type}/${experiment_name}/${now:%Y-%m-%d_%H-%M-%S}

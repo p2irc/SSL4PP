@@ -1,0 +1,29 @@
+command:
+  - ${env}
+  - ${interpreter}
+  - ${program}
+  - +experiment=detection/oppd_plant_detection
+  - distributed=null
+  - wandb.name=null
+  - experiment_name=densecl_imagenet_benchmark
+  - checkpoint.pretrained=https://cloudstor.aarnet.edu.au/plus/s/hdAg5RYm8NNM2QP/download
+  - ${args_no_hyphens}
+method: grid
+metric:
+  goal: maximize
+  name: test/map
+name: densecl_imagenet_benchmark
+parameters:
+  task.dataset.subset:
+    values:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+  task.trainer.base_lr:
+    values:
+      - 0.03
+      - 0.005
+      - 0.0008
+program: run_benchmark.py

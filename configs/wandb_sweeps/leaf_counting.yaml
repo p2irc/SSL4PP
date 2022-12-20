@@ -1,0 +1,24 @@
+command:
+  - ${env}
+  - ${interpreter}
+  - ${program}
+  - +experiment=counting/leaf_counting
+  - distributed=null
+  - wandb.name=null
+  - experiment_name=supervised_imagenet_pytorch_benchmark
+  - checkpoint.pretrained=https://download.pytorch.org/models/resnet50-0676ba61.pth
+  - ${args_no_hyphens}
+method: grid
+metric:
+  goal: minimize
+  name: valid/mae
+name: supervised_imagenet_pytorch_benchmark
+parameters:
+  task.trainer.base_lr:
+    values:
+      - 0.0001
+      - 3e-05
+      - 1e-05
+      - 3e-06
+      - 1e-06
+program: run_benchmark.py

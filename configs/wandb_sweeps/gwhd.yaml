@@ -1,0 +1,24 @@
+command:
+  - ${env}
+  - ${interpreter}
+  - ${program}
+  - +experiment=detection/wheat_head_detection
+  - distributed=null
+  - wandb.name=null
+  - experiment_name=mocov2_imagenet_sweep
+  - checkpoint.pretrained=https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_200ep/moco_v2_200ep_pretrain.pth.tar
+  - ${args_no_hyphens}
+method: grid
+metric:
+  goal: maximize
+  name: val/ADA
+name: mocov2_imagenet
+parameters:
+  task.trainer.base_lr:
+    values:
+      - 0.08
+      - 0.03
+      - 0.009
+      - 0.003
+      - 0.001
+program: run_benchmark.py

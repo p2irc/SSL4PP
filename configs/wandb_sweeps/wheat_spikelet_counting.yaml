@@ -1,0 +1,31 @@
+command:
+  - ${env}
+  - ${interpreter}
+  - ${program}
+  - +experiment=counting/wheat_spikelet_counting
+  - distributed=null
+  - wandb.name=null
+  - experiment_name=random_init
+  - checkpoint.pretrained=null
+  - ${args_no_hyphens}
+method: grid
+metric:
+  goal: minimize
+  name: test/mae
+name: random_init
+parameters:
+  task.dataset.subset:
+    values:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+  task.trainer.base_lr:
+    values:
+      - 0.001
+      - 0.0005
+      - 0.0002
+      - 0.0001
+      - 5e-05
+program: run_benchmark.py
